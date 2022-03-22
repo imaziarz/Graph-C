@@ -1,0 +1,292 @@
+\documentclass[]{article}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows}
+\tikzstyle{line} = [draw, -latex']
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage[]{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\PassOptionsToPackage{hyphens}{url} % url is loaded by hyperref
+\usepackage[unicode=true]{hyperref}
+\hypersetup{
+            pdftitle={Generacja grafu i odnalezienie najkrótszej ścieżki pomiędzy węzłami: graph},
+            pdfauthor={Ulyana Petrashevich, Inga Maziarz}
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+% set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+
+
+\title{\texttt{Specyfikacja implementacyjna}\\Generacja grafu i odnalezienie najkrótszej ścieżki pomiędzy węzłami - \texttt{graph}}
+\author{Ulyana Petrashevich, Inga Maziarz}
+\date{02.03.2022}
+
+\begin{document}
+\maketitle
+
+\section{Informacje ogólne}\label{header-n231}
+
+Program \texttt{graph} został napisany w języku C w środowisku programistycznym Visual Studio. Współpraca i wersjonowanie odbywa się w repozytorium zdalnym w serwisie GitLab.
+
+\subsection{Biblioteki:}
+\begin{itemize}
+    \item stdio.h
+    
+    Standardowa biblioteka, obsługująca operacje wejścia/wyjścia.
+    \item stdlib.h
+    
+    Biblioteka, zawierająca standardowe narzędzia języka C.
+    \item time.h
+    
+    Biblioteka do obsługi czasu.
+    \item math.h
+    
+    Biblioteka matematyczna.
+\end{itemize}
+
+\section{Opis modułów}\label{header-n233}
+
+Moduł \texttt{graph} zawiera funkcje do obsługi grafu. Składa się z plików graph.c i graph.h. Plik graph.h przechowuje definicję struktury graph\_t, przedstawiającej graf.  
+\begin{itemize}
+\item
+   \textbf{read\_graph()}
+
+Dane wejściowe: podany przez użytkownika plik z danymi zapisanymi w ustalonym formacie (\texttt{in}); pusta struktura opisująca graf \texttt{graph}.
+
+Dane wyjściowe: liczba \texttt{0} w przypadku pomyślnego wczytania danych; liczba \texttt{1} w przypadku wystąpienia poważnego błędu, skutkującym przerwaniem programu.
+
+Funkcja przepisuje dane z ustalonego formatu do struktury podanej jako argument funkcji. Oprócz tego sprawdza poprawność podanych danych, m.in. podanie dodatnich liczb wierszy i kolumn i dodatnich wag krawędzi.
+\item
+  \textbf{write\_graph()}
+  
+Dane wejściowe: struktura zawierająca informacje o grafie \texttt{graph}; otwarty plik \texttt{gout} do zapisu grafu.
+
+Dane wyjściowe: brak.
+
+Funkcja zapisuje graf opisany przez strukturę do podanego pliku w odpowiednim formacie.
+\item
+  \textbf{generate\_graph()}
+  
+Dane wejściowe: pusta struktura, przechowująca informacje o grafie \texttt{graph}; liczba wierszy generowanego grafu \texttt{n}, liczba kolumn generowanego grafu \texttt{m}, dolna granica zakresu losowanych wartości wag \texttt{x}, górna granica zakresu losowanych wartości wag \texttt{y}, flaga spójności grafu \texttt{s}.
+
+Dane wyjściowe: brak.
+
+Funkcja generuje graf zgodnie z podanymi parametrami do podanej struktury. Generowany graf jest nieskierowany.
+\item
+  \textbf{dijkstra()}
+
+Dane wejściowe: struktura \texttt{graph} przechowująca graf, numer węzła początkowego \texttt{start}, pusta tabela poprzedników dla każdego wierzchołka \texttt{last}, pusta tabela kosztów dojścia do każdego wierzchołka od początkowego \texttt{length}.
+
+Dane wyjściowe: brak.
+
+Funkcja odnajduje najkrótszą ścieżkę od węzła początkowego do wszystkich pozostałych (w tym szukanego) za pomocą algorytmu Dijkstry.
+\item
+  \textbf{bfs()}
+
+Dane wejściowe: struktura \texttt{graph} przechowująca graf.
+
+Dane wyjściowe: liczba \texttt{0} w przypadku, gdy graf jest spójny, liczba \texttt{1}, gdy nie jest.
+
+Funkcja za pomocą algorytmu przeszukiwania grafu wszerz (BFS) sprawdza, czy graf jest spójny.
+\item
+  \textbf{find\_path()}
+
+Dane wejściowe: struktura \texttt{graph} przechowująca informacje o grafie, numer wierzchołka początkowego k, numer wierzchołka końcowego l, otwarty plik \texttt{out} do zapisu znalezionej ścieżki.
+
+Dane wyjściowe: brak.
+
+Funkcja znajduje najkrótszą ścieżkę między wierzchołkami za pomocą algorytmu Dijkstry, opisanego w funkcji dijkstra i zapisuje ścieżkę i jej długość do pliku.
+\end{itemize}
+
+Uruchomienia odpowiednich funkcji, w zależności od opcji wywołania, zapewnia główna funkcja \textbf{main()} w pliku \textbf{main.c}.
+\section{Schemat modułów}\label{header-n233}
+Poniższy wykres przedstawia schemat podziału programu na pliki i zależności między funkcjami.
+\begin{figure}[!h]
+  \centering
+  \begin{tikzpicture}[node distance = 2cm, auto]
+    % nodes
+    \node [rectangle, draw, text=white, fill=black!60, text centered, rounded corners,minimum height=4em, text width=10em] (init) {\Large graph.h\\\normalsize graph\_t: \\int row\\int col\\double* weights};
+    \node [rectangle, draw, below of = init,text centered, rounded corners,text=white, fill=black!60, minimum height=4em, text width=10em,node distance = 2.5cm] (graph) {\Large graph.c};
+    \node [below of = graph,node distance = 2.5cm] (blank) {};
+    \node [rectangle, draw, left of = blank, text centered, fill=black!10, node distance = 3.5cm, minimum height=7.3em, text width=9em] (read) {\large \textbf{int read\_graph\\}\normalsize(FILE* in, graph\_t graph)};
+    \node [rectangle, draw, text centered, right of = blank,fill=black!7, node distance = 2.5cm,minimum height=3em, text width=10em] (write) {\large \textbf{void write\_graph\\} \normalsize (graph\_t graph, FILE* gout)};
+    \node [rectangle, draw, right of = write, text centered, fill=black!10, node distance = 5.5cm, minimum height=5.3em, text width=14em] (gen) {\large \textbf{void generate\_graph\\} \normalsize (graph\_t graph, int n, int m, double x, double y, int s)};
+     \node [rectangle, draw, text centered, below of = blank,fill=black!7, node distance = 2.5cm,minimum height=3em, text width=10em] (find) {\large \textbf{void find\_path\\} \normalsize (graph\_t graph, int k, int l, FILE* out)};
+     \node [below of = find,node distance = 2.5cm] (blank1) {};
+    \node [rectangle, draw, text centered, left of = blank1, fill=black!9, node distance = 2.5cm, minimum height=3em, text width=10em] (bfs) {\large \textbf{int bfs\\} \normalsize (graph\_t graph)};
+    \node [rectangle, draw, text centered, right of = blank1, fill=black!8,node distance = 2.5cm, minimum height=3em, text width=10em] (dijkstra) {\large \textbf{void dijkstra\\} \normalsize (graph\_t graph, int start, int* last, double* length)};
+    \node [rectangle, below of = find] (blank2) {};
+    \node [rectangle, draw, text centered, text=white, fill=black!60,minimum height=4em, text width=8em, right of = blank2, node distance = 8cm, text centered, rounded corners] (main) {\Large main()};
+    % edges
+    \path [line] (init) -- (graph);
+    \path [line] (graph) -- (read.north);
+    \path [line] (graph) -| (gen.north);
+    \path [line] (graph) -- (find.north);
+    \path [line] (graph) -- (write);
+    \path [line] (find) -- (dijkstra);
+    \path [line] (read.south) -| (main);
+    \path [line] (find) -- (bfs);
+    \path [line] (main.north) -| (write.south);
+    \path [line] (main.east) -| (gen.east);
+    \path [line] (bfs) -- (find);
+    \path [line] (main) |- (read.south);
+    \path [line] (main.west) |- (find);
+  \end{tikzpicture}
+\end{figure}
+\section{Struktury}\label{header-n279}
+Program zawiera strukturę \texttt{graph\_t}, która przechowuje liczbę wierszy(row) i kolumn(col) węzłów i jednowymiarową tablicę \texttt{weights} reprezentującą macierz sąsiedztwa w sposób, gdzie początek każdego nowego wiersza macierzy idzie za końcem poprzedniego(i * col, 0 \leqslant i \leqslant row). 
+
+\section{Testy}\label{header-n256}
+Testy są generowane poprzez plik Makefile. Polecenie \texttt{make tests} powoduje kilkukrotne wywołanie się programu z różnymi parametrami. Poniżej znajdują się przykłady wyników działań niektórych testów.
+
+\bigskip
+Przy przyjmowaniu danych \texttt{./graph -{}-file dane.txt -{}-from 0 -{}-to 3 -{}-output  sciezka.txt}, gdzie dane.txt zawiera:
+\begin{verbatim}
+2 2
+1 :5.74  2 :3.21
+3 :10.21  
+3 :1.74
+\end{verbatim}
+, program doda do pliku \texttt{sciezka.txt} dane:
+\begin{verbatim}
+Najkrótsza ścieżka:
+0 -3.21- 2 -1.74- 3
+Długość ścieżki równa 4.95
+\end{verbatim}
+
+\bigskip
+\bigskip
+Przy przyjmowaniu danych\texttt{./graph -{}-file dane.txt -{}-from 1 -{}-to -3 -{}-output sciezka.txt}, gdzie \texttt{dane.txt} zawiera:
+\begin{verbatim}
+2 2
+1 :5.74  2 :3.21
+3 :10.21  
+3 :1.74
+\end{verbatim}
+, program przekaże na stderr komunikat \texttt{„Numer węzła końcowego
+musi być większy lub równy 0. Ustawiam wartość 0.”} i doda do pliku \texttt{sciezka.txt} dane:
+\begin{verbatim}
+Najkrótsza ścieżka:
+1 -5.74- 0
+Długość ścieżki równa 5.74
+\end{verbatim}
+\bigskip
+Ta sama procedura nastąpi, gdy węzeł początkowy lub końcowy nie będzie węzłem o indeksie należącym do przedziału \texttt{[0, row*col-1]}. Przypisane zostaną wartości domyślne (tj. \texttt{from = 0, to = row*col-1}).
+
+\bigskip
+\bigskip
+Przy przyjmowaniu danych \texttt{./graph -{}-file dane.txt -{}-from 0 -{}-to 3 -{}-output  sciezka.txt}, gdzie \texttt{dane.txt} zawiera:
+\begin{verbatim}
+2 2
+1 :5.74  2 :-3.21
+3 :10.21  
+3 :1.74
+\end{verbatim}
+, program wypisze na stderr komunikat \texttt{„Waga krawędzi między węzłem 0. i 1. jest ujemna, równa -3.21. Ustawiam wartość 3.21”} i doda do pliku \texttt{sciezka.txt} dane:
+\begin{verbatim}
+Najkrótsza ścieżka:
+0 -3.21- 2 -1.74- 3
+Długość ścieżki równa 4.95
+\end{verbatim}
+
+\bigskip
+\bigskip
+Przy przyjmowaniu danych \texttt{./graph -{}-file dane.txt -{}-output  sciezka.txt}, gdzie \texttt{dane.txt} zawiera:
+\begin{verbatim}
+2 2
+1 : 5.74  2 :3.21
+3 : 10.21  
+3 : 1.74
+\end{verbatim}
+, program wypisze na stderr komunikaty \texttt{„Nie podano numeru węzła początkowego. Ustawiam wartość 0”, „Nie podano numeru węzła końcowego. Ustawiam wartość 3”} i doda do pliku \texttt{sciezka.txt} dane:
+\begin{verbatim}
+Najkrótsza ścieżka:
+0 -3.21- 2 -1.74- 3
+Długość ścieżki równa 4.95
+\end{verbatim}
+
+\bigskip
+\bigskip
+Przy przyjmowaniu danych \texttt{./graph -{}-grow 2 -{}-gcol 3 –{}-gfrom 4 –{}-gto 12 -{}-gconnect 1 –{}-goutput dane.txt}, program doda do pliku \texttt{dane.txt} dane:
+\begin{verbatim}
+2 3
+1 :5.2378918834567465  3 :6.3484835763285634
+2 :9.8374738737465738  4 :8. 3847356384723346
+5 :4.1982324838491473
+4 :7. 8652858742847578
+5 :11.4349434372947475
+\end{verbatim}
+
+\bigskip
+\bigskip
+Przy przyjmowaniu danych \texttt{./graph -{}-from 0 -{}-to 3 -{}-output sciezka.txt -{}-grow 2 -{}-gcol 3 –{}-gfrom 4 –{}-gto 12 -{}-gconnect 1 –{}-goutput dane.txt}, program przekaże na stderr komunikat \texttt{„Nie został podany plik z danymi. Tworzę graf spójny o rozmiarach 2, 3, z wartościami wag w zakresie [4, 12 ].”} i doda do pliku \texttt{dane.txt} dane:
+\begin{verbatim}
+2 3
+1 :5.2378918834567465  3 :6.3484835763285634
+2 :9.8374738737465738  4 :8. 3847356384723346
+5 :4.1982324838491473
+4 :7. 8652858742847578
+5 :11.4349434372947475
+\end{verbatim}
+i do pliku \texttt{sciezka.txt} dane:
+\begin{verbatim}
+Najkrótsza ścieżka:
+0 -6.3484835763285634- 3
+Długość ścieżki równa 6.3484835763285634
+\end{verbatim}
+W przypadku, gdy wartość \texttt{gfrom} będzie większa niż \texttt{gto}, program zamieni ze sobą obie wartości nie informując o tym użytkownika.
+
+\bigskip
+\bigskip
+Przy przyjmowaniu danych \texttt{./graph -{}-file blednedane.txt -{}-from 0 -{}-to 3 -{}-output  sciezka.txt}, gdzie blednedane.txt zawiera:
+\begin{verbatim}
+"To nie jest plik z grafem."
+\end{verbatim}
+program przekaże na stderr komunikat \texttt{„Błędny format pliku z grafem. Przerywam działanie."}
+
+
+
+\end{document}
+
+
