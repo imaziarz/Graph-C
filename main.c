@@ -52,18 +52,18 @@ int main(int argc, char **argv)
 						flag = 1;
 						break;
 					case 'o':
-                        outn = optarg;
+                        			outn = optarg;
 						flag = 1;
-                        break;
+                       				break;
 					case 'n':
-                        n = atoi(optarg);
-                        break;
+                    				n = atoi(optarg);
+                        			break;
 					case 'm':
-                        m = atoi(optarg);
-                        break;
+                        			m = atoi(optarg);
+                       				break;
 					case 'x':
-                        x = atof(optarg);
-                        break;
+                        			x = atof(optarg);
+                        			break;
 					case 'y':
 						y = atof(optarg);
 						break;
