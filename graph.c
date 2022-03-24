@@ -147,4 +147,34 @@ int bfs(graph_t graph)
 	}
 	return 0;
 }
-void find_path(graph_t graph, int k, int l, FILE *out);
+void find_path(graph_t graph, int k, int l, FILE *out)
+{
+	if (bfs(graph)) {
+		fprintf(stderr, "Podany graf nie jest spójny. Przerywam działanie.");
+		return EXIT_FAILURE;
+	}
+	double length[graph->col * graph->row];
+	double last[graph->col * graph->row];
+	dijkstra(graph, k, last, length);
+	double path[];
+	double weight[];
+	fprintf(out, "Najkrótsza ścieżka: \n");
+	int i = l;
+	int k = 1;
+	path = malloc(1 * sizeof(double));
+	path[0] = l;
+	while (last[i] != -1) {
+		k++;
+		path = malloc(k * sizeof(double));
+		path[k - 1] = last[i];
+		weight = malloc((k-1) * sizeof(double));
+		weight[k - 2] = graph->weights[i * graph->col * graph->col + k];
+		i = last[i];
+	}
+	for (int j = k - 1; j > 0; j--) {
+		fprintf(out, "%f -%f- ", path[j], weight[j-1]);
+	}
+	fprintf(out, "%f\n", path[0]);
+	fprintf(out, "Długość ścieżki równa %f", length[l]);
+
+}
