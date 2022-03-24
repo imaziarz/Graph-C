@@ -5,7 +5,7 @@
 #include "graph.h"
 
 char *usage =
-	"Usage: %s --file data_file [--from k --to l --output output_file] [--grow n --gcol m --gfrom x --gto y --goutput data_output_file]";
+	"Usage: %s --file data_file [--from k --to l --output output_file] [--grow n --gcol m --gfrom x --gto y --gconnect s --goutput data_output_file]";
 int main(int argc, char **argv)
 {
 	int opt;
@@ -17,6 +17,7 @@ int main(int argc, char **argv)
     int m = 10;
 	double x = 0.01; 
 	double y = 10;
+	int s = 2;
 	char *goutn = NULL;
 	char *progname = argv[0];
 	graph_t graph;
@@ -31,6 +32,7 @@ int main(int argc, char **argv)
 		{"gcol", 1, NULL, 'm'},
 		{"gfrom", 1, NULL, 'x'},
 		{"gto", 1, NULL, 'y'},
+		{"gconnect", 1, NULL, 's'},
 		{"goutput", 1, NULL, 'g'},
 		{0,0,0,0}
 	};
@@ -67,6 +69,9 @@ int main(int argc, char **argv)
 					case 'y':
 						y = atof(optarg);
 						break;
+					case 's':
+						s = atoi(optarg);
+						break;
 					case 'g':
 						goutn = optarg;	
 					default:
@@ -100,12 +105,13 @@ int main(int argc, char **argv)
 			fclose(in);
 	} else 
 	{
-		fprintf(stderr, "%s: nie został podany plik z danymi. Tworzę graf o rozmiarach %d, %d, z wartościami wag w zakresie [%f, %f].\n", argv[0], n, m, x, y);
+		fprintf(stderr, "%s: nie został podany plik z danymi. Tworzę spójny graf o rozmiarach %d, %d, z wartościami wag w zakresie [%f, %f].\n", argv[0], n, m, x, y);
 		FILE *gout;
+		s = 1;
 		if (goutn != NULL)
 			gout = fopen(goutn, "w");
 		else gout = stdout;
-		generate_graph(graph, n, m, x, y);
+		generate_graph(graph, n, m, x, y, s);
 		write_graph(graph, gout);
 	}
 	FILE *out;
@@ -118,6 +124,8 @@ int main(int argc, char **argv)
 		}
 	}
 	find_path(graph, k, l, out);
+	} else {
+		generate_graph(graph, n, m, x, y, s);
 	}
 	return 0;
 }
