@@ -10,23 +10,44 @@ typedef struct		//zostawiam aby sprawdzać narazie
 
 //3 poniższe funkcje są na razie robocze i nie działają
 int read_graph(FILE* in, graph_t graph){
-	int node_index = -1;
-	int neighbor_index;
-	char a, b, c;
-	if (fscanf(in, "%d %d", &graph->row, &graph->col) != 2){
-		fprintf(stderr, "Błędny format pliku z grafem. Przerywam działanie.\n");
-		return 1;
-	}
+        int neighbor_index;
+        char a, b, c;
+        double weight;
+        if (fscanf(in, "%d %d", &graph->row, &graph->col) != 2){
+                fprintf(stderr, "Błędny format pliku z grafem. Przerywam działanie.\n");
+                return 1;
+        }
+        int iter = graph->col * graph->row;
+        graph->weights = (double*) malloc(iter * iter * sizeof(double));
 
-	for (int i=0; i < (graph->row * graph->col); i++){
-		while (a = fgetc(in) == '\n'); //przejście do linii z wagami
-		node_index++;
-		fscanf(in, "%d", &neighbor_index);
-		while (b = fgetc(in) == ' ');
-		(c = fgetc(in) == ':');
-		fscanf(in, "%lf" graph->weights[nodeindex * graph->row * graph-> col + neighbor_index]);
-	}
-	return 0;
+        //początkowo ustawiam wszystkie wagi jako nieskończoność
+        for (int i=0; i<iter*iter; i++){
+                graph->weights[i] = 100.0; //tu ustawić inf
+        }
+
+        for (int i=0; i < iter; i++){
+        //przejście do linii z wagami
+                for (;;){
+                fscanf(in, "%d", &neighbor_index);
+                printf("neighbor index: %d\n", neighbor_index);
+                /*b = fgetc(in) == ' ';
+                printf("zmienna b: %c\n", b);
+                c = fgetc(in) == ':';
+                printf("zmienna c: %c\n", c);
+                */
+                fscanf(in, "%c", &b);
+                fscanf(in, "%c", &c);
+                fscanf(in, "%lf", &weight);
+                printf("waga: %lf\n", weight);
+                graph->weights[i * iter + neighbor_index] = weight;
+                if (a = fgetc(in) == '\n')
+                        break;
+                else
+                        continue;
+        }
+        }
+
+        return 0;
 }
 
 void write_graph(graph_t graph, FILE *gout){
