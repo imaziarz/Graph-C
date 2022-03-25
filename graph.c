@@ -9,6 +9,7 @@ typedef struct		//zostawiam aby sprawdzać narazie
 } *graph_t;
 
 //3 poniższe funkcje są na razie robocze i nie działają
+//chociaż możliwe że read już działa
 int read_graph(FILE* in, graph_t graph){
         int neighbor_index;
         char a, b, c;
@@ -26,15 +27,9 @@ int read_graph(FILE* in, graph_t graph){
         }
 
         for (int i=0; i < iter; i++){
-        //przejście do linii z wagami
                 for (;;){
                 fscanf(in, "%d", &neighbor_index);
                 printf("neighbor index: %d\n", neighbor_index);
-                /*b = fgetc(in) == ' ';
-                printf("zmienna b: %c\n", b);
-                c = fgetc(in) == ':';
-                printf("zmienna c: %c\n", c);
-                */
                 fscanf(in, "%c", &b);
                 fscanf(in, "%c", &c);
                 fscanf(in, "%lf", &weight);
@@ -44,9 +39,8 @@ int read_graph(FILE* in, graph_t graph){
                         break;
                 else
                         continue;
+        	}
         }
-        }
-
         return 0;
 }
 
