@@ -44,17 +44,36 @@ int read_graph(FILE* in, graph_t graph){
         return 0;
 }
 
-void write_graph(graph_t graph, FILE *gout){
+void write_graph(graph_t graph, FILE* gout){
+	int iter = graph->row * graph->col; //zmienna do iterowania; jest równa liczbie wszystkich węzłów
 	fprintf(gout, "%d %d\n", graph->row, graph->col);
-	for (int i = 0; i < (graph->col)*(graph->row); i++){
+	for (int i=0; i<iter; i++){ //pętla zewnętrzna do przechodzenia po węzłach
 		fprintf(gout, "\t");
-		for (int j = 0; j < (graph->col)*(graph->row); j++){
-			if (graph->weights[i*(graph->col)*(graph->row) + j] != INFINITY)
+		for (int j=0; j<iter; j++){ //pętla wewnętrzna do przechodzenia po sąsiadach
+			if (graph->weights[i* + j] != INFINITY)
 				fprintf(gout, "%d :%lf\t", j, graph->weights[i*(graph->col)*(graph->row) + j]);
 		}
 		fprintf(gout, "\n");
 	}
 }
+void write(graph_t graph, FILE* gout){
+        int iter = graph->row*graph->col;
+        fprintf(gout, "%d %d\n", graph->row, graph->col);
+        /*najpierw wypisuję ilość row i col
+         * potem daję enter
+         * i zaczynam wypisywać węzły i ich wagi
+         */
+        for (int i=0; i<iter; i++){ //pętla zewnętrzna do przechodzenia po węzłach
+                fprintf(gout, "\t");
+                for (int j=0; j<iter; j++){ //pętla wewnętrzna do przechodzenia po sąsiadach
+                        if (graph->weights[i*iter+j] < 100.0){ //jeśli jest połączenie
+                                fprintf(gout, "%d :%lf ", j, graph->weights[i*iter+j]);
+                        }
+                }
+                fprintf(gout, "\n");
+        }
+}
+
 
 void generate_graph(graph_t graph, int n, int m, double x, double y, int s){
 	graph->row = n;
