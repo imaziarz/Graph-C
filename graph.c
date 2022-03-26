@@ -1,9 +1,6 @@
 #include "graph.h"
 #include <time.h>
 
-//3 poniższe funkcje są na razie robocze i nie działają
-//chociaż możliwe że read już działa
-
 
 //do funkcji trzeba przekazać zainicjalizowany graf z alokowaną pamięcią malloc (graph_t) sizeof(graph_t)
 int read_graph(FILE* in, graph_t graph){
@@ -55,10 +52,9 @@ void write(graph_t graph, FILE* gout){
                 fprintf(gout, "\n");
         }
 }
-//na razie generate generuje macierz grafu NIESKIEROWANEGO
-//dodam jeszcze warunki, żeby węzły istniały tylko między sąsiadami
-//a jak s==0 to usunę niektóre węzły
+
 void generate_graph(graph_t graph, int n, int m, double x, double y, int s){
+        // graf niespójny <=> s==0
         if (n <= 0){
                 printf("Liczba wierszy musi być dodatnia. Ustawiam wartość 10.\n");
                 n = 10;
@@ -87,11 +83,15 @@ void generate_graph(graph_t graph, int n, int m, double x, double y, int s){
 
         for (int i=0; i<iter; i++) //iteruję po elementach macierzy tylko po jednej przekątnej - nastąpi zduplikowanie wag na drugą przekątną
                 for (int j=0+i; j<iter; j++){
-                        graph->weights[i*iter + j] = x + (double)rand()/RAND_MAX*(y-x);
-                        graph->weights[j*iter + i] = graph->weights[i*iter + j]; //duplikacja wagi
+                        if ((j==i+1 && (i+1)%m) || (j==i-1 && i%m) || (j==i-m && i>=m) || (j==i+m && i<iter-m)){
+                                //powyższe warunki pozwalają na wstawienie krawędzi tylko między sąsiadami
+                                if (s || ((double)rand()/RAND_MAX > 0.5)){ //jeżeli s==0, to wstawiam krawędź z 50% prawdopodobieństwem
+                                        graph->weights[i*iter + j] = x + (double)rand()/RAND_MAX*(y-x);
+                                        graph->weights[j*iter + i] = graph->weights[i*iter + j]; //duplikacja wagi
+                        }
+                }
                 }
 }
-
 
 
 void dijkstra(graph_t graph, int start, int *last, double *length)
