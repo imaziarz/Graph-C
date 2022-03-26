@@ -1,13 +1,6 @@
 #include "graph.h"
 #include <time.h>
 
-typedef struct		//zostawiam aby sprawdzać narazie
-{
-	int row;
-	int col;
-	double *weights; //2d macierz sąsiedztwa, wymiary row*col * row*col, w postaci 1d
-} *graph_t;
-
 //3 poniższe funkcje są na razie robocze i nie działają
 //chociaż możliwe że read już działa
 int read_graph(FILE* in, graph_t graph){
@@ -167,6 +160,20 @@ void find_path(graph_t graph, int k, int l, FILE *out)
 	if (bfs(graph)) {
 		fprintf(stderr, "Podany graf nie jest spójny. Przerywam działanie.");
 		return EXIT_FAILURE;
+	}
+	if (k <= 0) {
+		printf("Numer węzła	początkowego musi być większy lub równy 0. Ustawiam wartość 0.");
+		k = 0;
+	} else if (k >= (graph->col * graph->row)) {
+		printf("Numer węzła początkowego znajduje się za przedziałem grafu. Ustawiam wartość %d.", (graph->col * graph->row -1));
+		k = graph->col * graph->row - 1;
+	}
+	if (l <= 0) {
+		printf("Numer węzła	końcowego musi być większy lub równy 0. Ustawiam wartość 0.");
+		l = 0;
+	} else if (l >= (graph->col * graph->row)) {
+		printf("Numer węzła początkowego znajduje się za przedziałem grafu. Ustawiam wartość %d.", (graph->col * graph->row - 1));
+		l = graph->col * graph->row - 1;
 	}
 	double length[graph->col * graph->row];
 	double last[graph->col * graph->row];
