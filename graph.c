@@ -55,46 +55,45 @@ void write(graph_t graph, FILE* gout){
                 fprintf(gout, "\n");
         }
 }
-
-
+//na razie generate generuje macierz grafu NIESKIEROWANEGO
+//dodam jeszcze warunki, żeby węzły istniały tylko między sąsiadami
+//a jak s==0 to usunę niektóre węzły
 void generate_graph(graph_t graph, int n, int m, double x, double y, int s){
-	graph->row = n;
-	graph->col = m;
-	        if (graph->row <= 0){
+        if (n <= 0){
                 printf("Liczba wierszy musi być dodatnia. Ustawiam wartość 10.\n");
-                graph->row = 10;
-		n = 10;
+                n = 10;
         }
-        if (graph->col <= 0){
+        if (m <= 0){
                 printf("Liczba kolumn musi być dodatnia. Ustawiam wartość 10.\n");
-                graph->col = 10;
-		m = 10;
+                m = 10;
         }
+        if (x <= 0 ){
+                printf("Dolna granica przedziału losowanych wartości musi być dodatnia. Ustawiam wartość 0.01\n");
+                x = 0.01;
+        }
+        if (y <= 0 ){
+                printf("Górna granica przedziału losowanych wartości musi być dodatnia. Ustawiam wartość x + 1. \n");
+                y = x + 1;
+        }
+        graph->row = n;
+        graph->col = m;
+        int iter = n*m;
 
-	if (x <= 0 ){
-		printf("Dolna granica przedziału losowanych wartości musi być dodatnia. Ustawiam wartość 0.01\n");
-		x = 0.01;
-	}
-	if (y <= 0 ){
-		printf("Górna granica przedziału losowanych wartości musi być dodatnia. Ustawiam wartość x + 1. \n");
-		y = x + 1;
-	}
+        graph->weights = (double*) malloc(iter * iter * sizeof(double));
 
+        srand(time(NULL));
+        for (int i=0; i<iter*iter; i++)
+                graph->weights[i] = 0.0; //początkowe ustawienie wszystkich wag jako zero (nie ma połączeń)
 
-	int temp = 0; //zmienna do kontrolowania, czy do macierzy wstawiane są wagi tylko po jednej stronie diagonali
-	srand(time(NULL));
-	for (int i=0; i<n*m; i++) //wstawiam wiersz po wierszu
-		for (int j=0; j<n*m; j++){
-			//wagi nie mogą być różne dla tych samych węzłów - trzeba je zduplikować
-			//wstawienie wartości 0.0 na przekątnej macierzy sąsiedztwa (bo węzły nie są bezpośrednio połączone z samym sobą)
-			graph->weights[i*(n*m+1)] = 0.0;
-			temp = i*(n*m+1); //przechowuje indeks węzła do którego ostatnio wstawiono 0.0
-			if ((i*n*m + j) > temp) //&& warunek, który nie pozwoli na wstawienie krawędzi do węzłów, które nie sąsiadują ze sobą
-				graph->weights[i*n*m + j] = x + rand()/RAND_MAX*(y-x); //przedział [x,y]
-			else
-				graph->weights[i*n*m + j] = 0.0;
-		}
+        for (int i=0; i<iter; i++) //iteruję po elementach macierzy tylko po jednej przekątnej - nastąpi zduplikowanie wag na drugą przekątną
+                for (int j=0+i; j<iter; j++){
+                        graph->weights[i*iter + j] = x + (double)rand()/RAND_MAX*(y-x);
+                        graph->weights[j*iter + i] = graph->weights[i*iter + j]; //duplikacja wagi
+                }
 }
+
+
+
 void dijkstra(graph_t graph, int start, int *last, double *length)
 {
 	int col = graph->col;
