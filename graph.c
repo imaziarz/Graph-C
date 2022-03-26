@@ -82,7 +82,7 @@ void generate_graph(graph_t graph, int n, int m, double x, double y, int s){
 			graph->weights[i*(n*m+1)] = INFINITY;
 			temp = i*(n*m+1); //przechowuje indeks węzła do którego ostatnio wstawiono INFINITY
 			if ((i*n*m + j) > temp) //&& warunek, który nie pozwoli na wstawienie krawędzi do węzłów, które nie sąsiadują ze sobą
-				graph->weights[i*n*m + j] = x + RAND()/RAND_MAX*(y-x); //przedział [x,y]
+				graph->weights[i*n*m + j] = x + rand()/RAND_MAX*(y-x); //przedział [x,y]
 			else
 				graph->weights[i*n*m + j] = INFINITY;
 		}
@@ -102,14 +102,14 @@ void dijkstra(graph_t graph, int start, int *last, double *length)
 	length[start] = 0;
 	do{
 		min = INFINITY;
-		min_i = INFINITY;
+		min_i = -1;
 		for(i = 0; i < (row * col); i++){
 			if ((q[i] == 0) && (length[i] < min)){
 				min = length[i];
 				min_i = i;
 			}
 		}
-		if (min_i != INFINITY)
+		if (min_i != -1)
 		{
 			for( i = 0; i < (col*row); i++){
 				if (graph->weights[min_i * col * row + i] > 0)
@@ -123,7 +123,7 @@ void dijkstra(graph_t graph, int start, int *last, double *length)
 			}
 			q[min_i] = 1;
 		}
-	} while (min_i < INFINITY);
+	} while (min_i != -1);
 
 }
 int bfs(graph_t graph)
@@ -131,7 +131,8 @@ int bfs(graph_t graph)
 	int col = graph->col;
 	int rows = graph->row;
 	int n = 1;
-	int row[n];
+	int *row;
+	row = malloc(1 * sizeof(int));
 	int flag[col * rows];
 	int i,j;
 	int k = 0;
@@ -159,7 +160,7 @@ void find_path(graph_t graph, int k, int l, FILE *out)
 {
 	if (bfs(graph)) {
 		fprintf(stderr, "Podany graf nie jest spójny. Przerywam działanie.");
-		return EXIT_FAILURE;
+		exit(1);
 	}
 	if (k <= 0) {
 		printf("Numer węzła	początkowego musi być większy lub równy 0. Ustawiam wartość 0.");
@@ -176,27 +177,27 @@ void find_path(graph_t graph, int k, int l, FILE *out)
 		l = graph->col * graph->row - 1;
 	}
 	double length[graph->col * graph->row];
-	double last[graph->col * graph->row];
+	int last[graph->col * graph->row];
 	dijkstra(graph, k, last, length);
-	double path[];
-	double weight[];
+	int *path;
+	double *weight;
 	fprintf(out, "Najkrótsza ścieżka: \n");
 	int i = l;
-	int k = 1;
-	path = malloc(1 * sizeof(double));
+	int n = 1;
+	path = malloc(1 * sizeof(int));
 	path[0] = l;
 	while (last[i] != -1) {
-		k++;
-		path = malloc(k * sizeof(double));
-		path[k - 1] = last[i];
-		weight = malloc((k-1) * sizeof(double));
-		weight[k - 2] = graph->weights[i * graph->col * graph->col + k];
+		n++;
+		path = malloc(n * sizeof(int));
+		path[n - 1] = last[i];
+		weight = malloc((n-1) * sizeof(double));
+		weight[n - 2] = graph->weights[i * graph->col * graph->col + n];
 		i = last[i];
 	}
-	for (int j = k - 1; j > 0; j--) {
-		fprintf(out, "%f -%f- ", path[j], weight[j-1]);
+	for (int j = n - 1; j > 0; j--) {
+		fprintf(out, "%d -%f- ", path[j], weight[j-1]);
 	}
-	fprintf(out, "%f\n", path[0]);
+	fprintf(out, "%d\n", path[0]);
 	fprintf(out, "Długość ścieżki równa %f", length[l]);
 
 }
