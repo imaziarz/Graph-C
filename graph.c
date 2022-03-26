@@ -3,6 +3,9 @@
 
 //3 poniższe funkcje są na razie robocze i nie działają
 //chociaż możliwe że read już działa
+
+
+//do funkcji trzeba przekazać zainicjalizowany graf z alokowaną pamięcią malloc (graph_t) sizeof(graph_t)
 int read_graph(FILE* in, graph_t graph){
         int neighbor_index;
         char a, b, c;
@@ -14,11 +17,12 @@ int read_graph(FILE* in, graph_t graph){
         int iter = graph->col * graph->row;
         graph->weights = (double*) malloc(iter * iter * sizeof(double));
 
-        //początkowo ustawiam wszystkie wagi jako nieskończoność
+        //początkowo ustawiam wszystkie wagi jako zero; oznacza to, że nie ma połączeń między węzłami
         for (int i=0; i<iter*iter; i++){
-                graph->weights[i] = 100.0; //tu ustawić inf
+                graph->weights[i] = 0.0;
         }
-
+//tu będzie jeszcze wczytywanie do bufora z dynamicznie alokowaną pamięcią
+//i prawdopodobnie pozwoli to na usunięcie nieskończonej pętli, która może generować błędy
         for (int i=0; i < iter; i++){
                 for (;;){
                 fscanf(in, "%d", &neighbor_index);
@@ -37,29 +41,14 @@ int read_graph(FILE* in, graph_t graph){
         return 0;
 }
 
-void write_graph(graph_t graph, FILE* gout){
-	int iter = graph->row * graph->col; //zmienna do iterowania; jest równa liczbie wszystkich węzłów
-	fprintf(gout, "%d %d\n", graph->row, graph->col);
-	for (int i=0; i<iter; i++){ //pętla zewnętrzna do przechodzenia po węzłach
-		fprintf(gout, "\t");
-		for (int j=0; j<iter; j++){ //pętla wewnętrzna do przechodzenia po sąsiadach
-			if (graph->weights[i* + j] != INFINITY)
-				fprintf(gout, "%d :%lf\t", j, graph->weights[i*(graph->col)*(graph->row) + j]);
-		}
-		fprintf(gout, "\n");
-	}
-}
 void write(graph_t graph, FILE* gout){
-        int iter = graph->row*graph->col;
+        int iter = graph->row*graph->col; //zmienna do iterowania równa liczbie wszystkich węzłów
         fprintf(gout, "%d %d\n", graph->row, graph->col);
-        /*najpierw wypisuję ilość row i col
-         * potem daję enter
-         * i zaczynam wypisywać węzły i ich wagi
-         */
+
         for (int i=0; i<iter; i++){ //pętla zewnętrzna do przechodzenia po węzłach
                 fprintf(gout, "\t");
                 for (int j=0; j<iter; j++){ //pętla wewnętrzna do przechodzenia po sąsiadach
-                        if (graph->weights[i*iter+j] < 100.0){ //jeśli jest połączenie
+                        if (graph->weights[i*iter+j] > 0.0){ //jeśli jest połączenie
                                 fprintf(gout, "%d :%lf ", j, graph->weights[i*iter+j]);
                         }
                 }
@@ -97,13 +86,13 @@ void generate_graph(graph_t graph, int n, int m, double x, double y, int s){
 	for (int i=0; i<n*m; i++) //wstawiam wiersz po wierszu
 		for (int j=0; j<n*m; j++){
 			//wagi nie mogą być różne dla tych samych węzłów - trzeba je zduplikować
-			//wstawienie wartości infinity na przekątnej macierzy sąsiedztwa (bo węzły nie są bezpośrednio połączone z samym sobą)
-			graph->weights[i*(n*m+1)] = INFINITY;
-			temp = i*(n*m+1); //przechowuje indeks węzła do którego ostatnio wstawiono INFINITY
+			//wstawienie wartości 0.0 na przekątnej macierzy sąsiedztwa (bo węzły nie są bezpośrednio połączone z samym sobą)
+			graph->weights[i*(n*m+1)] = 0.0;
+			temp = i*(n*m+1); //przechowuje indeks węzła do którego ostatnio wstawiono 0.0
 			if ((i*n*m + j) > temp) //&& warunek, który nie pozwoli na wstawienie krawędzi do węzłów, które nie sąsiadują ze sobą
 				graph->weights[i*n*m + j] = x + rand()/RAND_MAX*(y-x); //przedział [x,y]
 			else
-				graph->weights[i*n*m + j] = INFINITY;
+				graph->weights[i*n*m + j] = 0.0;
 		}
 }
 void dijkstra(graph_t graph, int start, int *last, double *length)
