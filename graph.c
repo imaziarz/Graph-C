@@ -32,12 +32,21 @@ int read_graph(FILE* in, graph_t graph){
 
         for (int i=0; i < iter; i++){ //tu iteruję po każdej linii
 
-                if (i==0 || i==iter-1 || i==m-1 || i==iter-m) //warunek na 2 sąsiadów
-                        k = 2;
-                else if ((i%m == 0 || i%m == m-1 || (i>0 && i<m) || (i>iter-m && i<iter))) //warunek na 3 sąsiadów
-                        k = 3;
-                else //w innym przypadku będzie 4 sąsiadów
-                        k = 4;
+                if (n != 1 && m != 1){
+			if (i==0 || i==iter-1 || i==m-1 || i==iter-m) //warunek na 2 sąsiadów
+                        	k = 2;
+                	else if ((i%m == 0 || i%m == m-1 || (i>0 && i<m) || (i>iter-m && i<iter))) //warunek na 3 sąsiadów
+                        	k = 3;
+                	else //w innym przypadku będzie 4 sąsiadów
+                        	k = 4;
+		}
+
+		if (n==1 || m==1){
+			if (i==0 || i==iter-1)
+				k = 1;
+			else
+				k = 2;
+		}
 
                 for (int j=0; j<k; j++){ //iteracja od 2 do 4 razy - bo tyle sąsiadów może mieć węzeł
                         //oddzielny sposób na wczytywanie grafu z row lub col == 1; wtedy dopuszczam tylko jednego sąsiada
