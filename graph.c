@@ -28,7 +28,12 @@ int read_graph(FILE* in, graph_t graph){
                 fscanf(in, "%c", &c);
                 fscanf(in, "%lf", &weight);
                 printf("waga: %lf\n", weight);
+		if (weight < 0){
+			printf("Waga krawędzi między węzłem %d i %d jest ujemna, równa %lf. Ustawiam wartość %lf.", i, neighbor_index, weight, abs(weight));
+			weight = abs(weight);
+		}
                 graph->weights[i * iter + neighbor_index] = weight;
+		graph->weights[neighbor_index * iter + i] = weight;
                 if (a = fgetc(in) == '\n')
                         break;
                 else
@@ -78,6 +83,8 @@ void generate_graph(graph_t graph, int n, int m, double x, double y, int s){
         graph->weights = (double*) malloc(iter * iter * sizeof(double));
 
         srand(time(NULL));
+	if (s == 2)
+		s = (rand % 2) + 1;
         for (int i=0; i<iter*iter; i++)
                 graph->weights[i] = 0.0; //początkowe ustawienie wszystkich wag jako zero (nie ma połączeń)
 
@@ -98,19 +105,19 @@ void dijkstra(graph_t graph, int start, int *last, double *length)
 {
 	int col = graph->col;
 	int row = graph->row;
-	int q[row*col];
+	int q[row*col];		//tabela, pokazująca, czy odpowiedni węzeł był odwiedzony
 	int i, min_i;
 	double tmp, min;
 	for (i = 0; i < (row*col); i++){
-		q[i]=i;
-		length[i] = INFINITY;
-		last[i] = -1;
+		q[i]=0;
+		length[i] = INFINITY;		//ustawiam koszty dojścia na nieskończoność
+		last[i] = -1;			//poprzedniki na -1
 	}
 	length[start] = 0;
-	do{
+	do{				//wykonujemy pętlę aż indeks węzła o najmniejszym koszcie dojścia nie będzie pusty
 		min = INFINITY;
 		min_i = -1;
-		for(i = 0; i < (row * col); i++){
+		for(i = 0; i < (row * col); i++){	//szukamy węzeł o najmniejszym koszcie dojścia
 			if ((q[i] == 0) && (length[i] < min)){
 				min = length[i];
 				min_i = i;
@@ -118,7 +125,7 @@ void dijkstra(graph_t graph, int start, int *last, double *length)
 		}
 		if (min_i != -1)
 		{
-			for( i = 0; i < (col*row); i++){
+			for( i = 0; i < (col*row); i++){		//przypisujemy dojścia do sąsiadów
 				if (graph->weights[min_i * col * row + i] > 0)
 				{
 					tmp = min + graph->weights[min_i * col * row + i];
@@ -138,9 +145,9 @@ int bfs(graph_t graph)
 	int col = graph->col;
 	int rows = graph->row;
 	int n = 1;
-	int *row;
+	int *row;		//kolejka pryorytetowa
 	row = malloc(1 * sizeof(int));
-	int flag[col * rows];
+	int flag[col * rows];		//flaga odwiedzenia wierzchołka
 	int i,j;
 	int k = 0;
 	row [k] = 0;
@@ -170,14 +177,14 @@ void find_path(graph_t graph, int k, int l, FILE *out)
 		exit(1);
 	}
 	if (k <= 0) {
-		printf("Numer węzła	początkowego musi być większy lub równy 0. Ustawiam wartość 0.");
+		printf("Numer węzła początkowego musi być większy lub równy 0. Ustawiam wartość 0.");
 		k = 0;
 	} else if (k >= (graph->col * graph->row)) {
 		printf("Numer węzła początkowego znajduje się za przedziałem grafu. Ustawiam wartość %d.", (graph->col * graph->row -1));
 		k = graph->col * graph->row - 1;
 	}
 	if (l <= 0) {
-		printf("Numer węzła	końcowego musi być większy lub równy 0. Ustawiam wartość 0.");
+		printf("Numer węzła końcowego musi być większy lub równy 0. Ustawiam wartość 0.");
 		l = 0;
 	} else if (l >= (graph->col * graph->row)) {
 		printf("Numer węzła początkowego znajduje się za przedziałem grafu. Ustawiam wartość %d.", (graph->col * graph->row - 1));
