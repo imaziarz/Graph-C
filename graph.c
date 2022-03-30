@@ -188,7 +188,7 @@ int bfs(graph_t graph)
 			if (graph->weights[row[k] * col * rows + j] != 0 && flag[j] == 0)
 			{
 				n+=1;
-				row = malloc(n * sizeof(int));
+				row = realloc(row, n * sizeof(int));
 				row[n-1] = j;
 			}
 		k++;
@@ -202,21 +202,21 @@ int bfs(graph_t graph)
 void find_path(graph_t graph, int k, int l, FILE *out)
 {
 	if (bfs(graph)) {
-		fprintf(stderr, "Podany graf nie jest spójny. Przerywam działanie.");
+		fprintf(stderr, "Podany graf nie jest spójny. Przerywam działanie.\n");
 		exit(1);
 	}
-	if (k <= 0) {
-		printf("Numer węzła początkowego musi być większy lub równy 0. Ustawiam wartość 0.");
+	if (k < 0) {
+		printf("Numer węzła początkowego musi być większy lub równy 0. Ustawiam wartość 0.\n");
 		k = 0;
 	} else if (k >= (graph->col * graph->row)) {
-		printf("Numer węzła początkowego znajduje się za przedziałem grafu. Ustawiam wartość %d.", (graph->col * graph->row -1));
+		printf("Numer węzła początkowego znajduje się za przedziałem grafu. Ustawiam wartość %d.\n", (graph->col * graph->row -1));
 		k = graph->col * graph->row - 1;
 	}
-	if (l <= 0) {
-		printf("Numer węzła końcowego musi być większy lub równy 0. Ustawiam wartość 0.");
+	if (l < 0) {
+		printf("Numer węzła końcowego musi być większy lub równy 0. Ustawiam wartość 0.\n");
 		l = 0;
 	} else if (l >= (graph->col * graph->row)) {
-		printf("Numer węzła początkowego znajduje się za przedziałem grafu. Ustawiam wartość %d.", (graph->col * graph->row - 1));
+		printf("Numer węzła początkowego znajduje się za przedziałem grafu. Ustawiam wartość %d.\n", (graph->col * graph->row - 1));
 		l = graph->col * graph->row - 1;
 	}
 	double length[graph->col * graph->row];
@@ -224,6 +224,7 @@ void find_path(graph_t graph, int k, int l, FILE *out)
 	dijkstra(graph, k, last, length);
 	int *path;
 	double *weight;
+	weight = malloc(1 * sizeof(double));
 	fprintf(out, "Najkrótsza ścieżka: \n");
 	int i = l;
 	int n = 1;
@@ -231,10 +232,10 @@ void find_path(graph_t graph, int k, int l, FILE *out)
 	path[0] = l;
 	while (last[i] != -1) {
 		n++;
-		path = malloc(n * sizeof(int));
+		path = realloc(path, n * sizeof(int));
 		path[n - 1] = last[i];
-		weight = malloc((n-1) * sizeof(double));
-		weight[n - 2] = graph->weights[i * graph->col * graph->col + n];
+		weight = realloc(weight, (n-1) * sizeof(double));
+		weight[n - 2] = graph->weights[i * graph->col * graph->row + last[i]];
 		i = last[i];
 	}
 	for (int j = n - 1; j > 0; j--) {
