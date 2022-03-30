@@ -70,10 +70,9 @@ int read_graph(FILE* in, graph_t graph){
         }
         return 0;
 }
-                                                                                                                                                                                         26,22         17%
 
 
-void write(graph_t graph, FILE* gout){
+void write_graph(graph_t graph, FILE* gout){
         int iter = graph->row*graph->col; //zmienna do iterowania równa liczbie wszystkich węzłów
         fprintf(gout, "%d %d\n", graph->row, graph->col);
 
