@@ -102,9 +102,13 @@ void generate_graph(graph_t graph, int n, int m, double x, double y, int s){
                 x = 0.01;
         }
         if (y <= 0 ){
-                printf("Górna granica przedziału losowanych wartości musi być dodatnia. Ustawiam wartość x + 1. \n");
+                printf("Górna granica przedziału losowanych wartości musi być dodatnia. Ustawiam wartość %lf. \n", x + 1);
                 y = x + 1;
         }
+	if ((s!= 0) && (s!=1) && (s!=2)){
+		printf("Podana nieprawidłowa wartość flagi spójności generowanego grafu. Ustawiam wartość 2 - losowo wybierana.");
+		s = 2;
+	}
         graph->row = n;
         graph->col = m;
         int iter = n*m;
