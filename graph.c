@@ -70,7 +70,6 @@ int read_graph(FILE* in, graph_t graph){
         }
         return 0;
 }
-                                                                                                                                                                                         26,22         17%
 
 
 void write(graph_t graph, FILE* gout){
