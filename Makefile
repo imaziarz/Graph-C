@@ -1,7 +1,9 @@
 graph: main.o graph.o
 	$(CC) -o graph main.o graph.o -lm
-main.o: main.c graph.h -lm
-graph.o: graph.c graph.h -lm
+main.o: main.c graph.h
+	$(CC) main.c -c -lm 
+graph.o: graph.c graph.h
+	$(CC) graph.c -c -lm
 test1: 
 	./graph --file dane.txt --from 0 --to 3 --output sciezka.txt
 test2: 
