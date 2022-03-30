@@ -37,7 +37,7 @@ int main(int argc, char **argv)
 		{0,0,0,0}
 	};
 	int opt_indx = 0;
-	while ((opt = getopt_long(argc, argv, "f:k:l:o:n:m:x:y:g:",long_options, &opt_indx)) != -1)
+	while ((opt = getopt_long(argc, argv, "f:k:l:o:n:m:x:y:s:g:",long_options, &opt_indx)) != -1)
 			{
 				switch (opt)
 				{
@@ -74,6 +74,7 @@ int main(int argc, char **argv)
 						break;
 					case 'g':
 						goutn = optarg;	
+						break;
 					default:
 						fprintf(stderr, usage, progname);
 						exit(EXIT_FAILURE);
@@ -125,7 +126,13 @@ int main(int argc, char **argv)
 	}
 	find_path(graph, k, l, out);
 	} else {
+		FILE *gout;
+		s = 1;
+		if (goutn != NULL)
+			gout = fopen(goutn, "w");
+		else gout = stdout;
 		generate_graph(graph, n, m, x, y, s);
+		write_graph(graph, gout);
 	}
 	return 0;
 }
