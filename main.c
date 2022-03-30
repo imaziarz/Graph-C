@@ -5,7 +5,33 @@
 #include "graph.h"
 
 char *usage =
-	"Usage: %s --file data_file [--from k --to l --output output_file] [--grow n --gcol m --gfrom x --gto y --gconnect s --goutput data_output_file]";
+	"Usage: %s [[--file data_file] [--from k] [--to l] [--output output_file]] [[--grow n] [--gcol m] [--gfrom x] [--gto y] [--gconnect s] [--goutput data_output_file]]\n"
+	"	if any od first four parameters was given then\n"	
+	"		if data_file is given then\n"
+	"			reads graph points from data_file\n"
+	"			finds path\n" 
+	"				-from k (>= 0 and <= maximum node nr.) node (0 by default)\n"
+	"				-to l (>= 0 and <= maximum node nr.) node (maximum node nr. by default)\n"
+	"			writes the path to output_file (stdout by default)\n"
+	"		else (data_file not given)\n"
+	"			generate connected graph\n"
+	"				-of n (> 0) rows (10 by default)\n"
+	"				-of m (> 0) columns (10 by default)\n"
+	"				-with edge weights within <x, y> range (<0.1, 10> by default) \n"
+	"			write generated graph to data_output_file (stdout by default)\n"
+	"			finds path\n" 
+	"				-from k (>= 0 and <= maximum node nr.) node (0 by default)\n"
+	"				-to l (>= 0 and <= maximum node nr.) node (maximum node nr. by default)\n"
+	"			writes the path to output_file (stdout by default)\n"
+	"		endif\n"
+	"	else (none of first four parameters was given) then\n"
+	"		generate graph\n"
+	"			-of n (> 0) rows (10 by default)\n"
+	"			-of m (> 0) columns (10 by default)\n"
+	"			-with edge weights within <x, y> range (<0.1, 10> by default) \n"
+	"			-connectivity defined by s: 0 - not connected, 1 - connected, 2 - random one (2 by default)\n"
+	"		write generated graph to data_output_file (stdout by default)\n"
+	"	endif\n";
 int main(int argc, char **argv)
 {
 	int opt;
@@ -13,8 +39,9 @@ int main(int argc, char **argv)
 	char *outn = NULL;
 	int k = 0;
 	int l = 0;
+	int flagl = 0;
 	int n = 10;
-    int m = 10;
+   	int m = 10;
 	double x = 0.01; 
 	double y = 10;
 	int s = 2;
@@ -52,6 +79,7 @@ int main(int argc, char **argv)
 					case 'l':
 						l = atoi(optarg);
 						flag = 1;
+						flagl = 1;
 						break;
 					case 'o':
                         			outn = optarg;
@@ -76,7 +104,7 @@ int main(int argc, char **argv)
 						goutn = optarg;	
 						break;
 					default:
-						fprintf(stderr, usage, progname);
+						fprintf(stderr, usage, progname, "\n");
 						exit(EXIT_FAILURE);
 				}
 			}
@@ -86,7 +114,7 @@ int main(int argc, char **argv)
 		for (; optind < argc; optind++)
 			fprintf(stderr, "\t\"%s\"\n", argv[optind]);
 		fprintf(stderr, "\n");
-		fprintf(stderr, usage, progname);
+		fprintf(stderr, usage, progname, "\n");
 		exit(EXIT_FAILURE);
 	}
 	if (flag == 1){
@@ -120,10 +148,12 @@ int main(int argc, char **argv)
 	{
 		out = fopen(outn, "w");
 		if (out == NULL){
-			fprintf(stderr, "%s: nie udało się otworzyć plik do zapisu ścieżki: %s. Ścieżka będzie wypisana na stdout.", argv[0], outn);
+			fprintf(stderr, "%s: nie udało się otworzyć plik do zapisu ścieżki: %s. Ścieżka będzie wypisana na stdout.\n", argv[0], outn);
 			out = stdout;
 		}
 	}
+	if (flagl == 0)
+		l = graph.col * graph.row - 1;
 	find_path(graph, k, l, out);
 	} else {
 		FILE *gout;
