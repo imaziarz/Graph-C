@@ -20,7 +20,7 @@ int main(int argc, char **argv)
 	int s = 2;
 	char *goutn = NULL;
 	char *progname = argv[0];
-	graph_t graph;
+	graph_t graph = (graph_t) malloc (sizeof(graph_t));
 	int flag = 0; //flaga aby sprawdzić, czy podano choć jeden argument do znajdowania ścieżki.jeżeli nie-tylko generujemy graf
 
 	const struct option long_options[] = {
