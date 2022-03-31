@@ -78,11 +78,9 @@ void write_graph(graph_t graph, FILE* gout){
 
         for (int i=0; i<iter; i++){ //pętla zewnętrzna do przechodzenia po węzłach
                 fprintf(gout, "\t");
-                for (int j=0; j<iter; j++){ //pętla wewnętrzna do przechodzenia po sąsiadach
-                        if (graph->weights[i*iter+j] > 0.0){ //jeśli jest połączenie
+                for (int j=0; j<iter; j++) //pętla wewnętrzna do przechodzenia po sąsiadach
+			if (graph->weights[i*iter+j] > 0.0)
                                 fprintf(gout, "%d :%lf ", j, graph->weights[i*iter+j]);
-                        }
-                }
                 fprintf(gout, "\n");
         }
 }
@@ -129,6 +127,10 @@ void generate_graph(graph_t graph, int n, int m, double x, double y, int s){
                                         graph->weights[i*iter + j] = x + (double)rand()/RAND_MAX*(y-x);
                                         graph->weights[j*iter + i] = graph->weights[i*iter + j]; //duplikacja wagi
                         }
+				else {
+					graph->weights[i*iter + j] = 0.0;
+					graph->weights[j*iter + i] = 0.0;
+				}
                 }
                 }
 }
