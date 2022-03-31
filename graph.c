@@ -6,67 +6,49 @@
 //do funkcji trzeba przekazać zainicjalizowany graf z alokowaną pamięcią malloc (graph_t) sizeof(graph_t)
 
 int read_graph(FILE* in, graph_t graph){
-        int neighbor;
-        int k; //zmienna określająca ile będzie iteracji w wierszu
-        char b, c;
+       int neighbor_index;
+        char a, b, c;
         double weight;
         if (fscanf(in, "%d %d", &graph->row, &graph->col) != 2){
                 fprintf(stderr, "Błędny format pliku z grafem. Przerywam działanie.\n");
                 return 1;
         }
-        int n = graph->row;
-        int m = graph->col;
-
-        if (m <= 0 || n <= 0){
-                fprintf(stderr, "Błędny format pliku z grafem. Liczba kolumn i wierszy w grafie musi być większa od 0. Przerywam działanie.\n");
-                return 1;
-        }
-
-        int iter = n*m;
+        a = fgetc(in);
+        int iter = graph->col * graph->row;
         graph->weights = (double*) malloc(iter * iter * sizeof(double));
 
         //początkowo ustawiam wszystkie wagi jako zero; oznacza to, że nie ma połączeń między węzłami
         for (int i=0; i<iter*iter; i++){
                 graph->weights[i] = 0.0;
         }
-
-        for (int i=0; i < iter; i++){ //tu iteruję po każdej linii
-
-                if (n != 1 && m != 1){
-			if (i==0 || i==iter-1 || i==m-1 || i==iter-m) //warunek na 2 sąsiadów
-                        	k = 2;
-                	else if ((i%m == 0 || i%m == m-1 || (i>0 && i<m) || (i>iter-m && i<iter))) //warunek na 3 sąsiadów
-                        	k = 3;
-                	else //w innym przypadku będzie 4 sąsiadów
-                        	k = 4;
-		}
-
-		if (n==1 || m==1){
-			if (i==0 || i==iter-1)
-				k = 1;
-			else
-				k = 2;
-		}
-
-                for (int j=0; j<k; j++){ //iteracja od 2 do 4 razy - bo tyle sąsiadów może mieć węzeł
-                        //oddzielny sposób na wczytywanie grafu z row lub col == 1; wtedy dopuszczam tylko jednego sąsiada
-                fscanf(in, "%d", &neighbor);
-
-                if (!(neighbor == i+1 || neighbor == i-1 || neighbor == i-m || neighbor == i+m)){
-                       fprintf(stderr, "Błędny format pliku z grafem. Między węzłem %d a %d nie może istnieć połączenie. Przerywam działanie.\n", i, neighbor);
-                        return 1;
-                }
-                fscanf(in, "%c", &b); //wczytanie spacji i dwukropka (bądź innych dwóch znaków oddzielających węzeł od wagi
+       int i = 0;
+       while(1){
+                for (;;){
+              	if ((a = fgetc(in)) == '\n')
+                	break;
+                else if(a == EOF)
+                	return 0;
+                fscanf(in, "%d", &neighbor_index);
+                printf("neighbor index: %d\n", neighbor_index);
+                fscanf(in, "%c", &b);
                 fscanf(in, "%c", &c);
                 fscanf(in, "%lf", &weight);
-
-                if (weight < 0){
-                        printf("Waga krawędzi między węzłem %d i %d jest ujemna, równa %lf. Ustawiam wartość %lf.", i, neighbor, weight, fabs(weight));
-                        weight = fabs(weight);
+                printf("waga: %lf\n", weight);
+		if (weight < 0){
+			printf("Waga krawędzi między węzłem %d i %d jest ujemna, równa %lf. Ustawiam wartość %lf.\n", i, neighbor_index, weight, fabs(weight));
+			weight = fabs(weight);
+		}
+		if (neighbor_index == i)	//dla sprawdzania
+			printf("Błąd\n");
+                graph->weights[i * iter + neighbor_index] = weight;
+		graph->weights[neighbor_index * iter + i] = weight;
+                if ((a = fgetc(in)) == '\n'){
+                        i++;
+                        break;
                 }
-                graph->weights[i * iter + neighbor] = weight; //ewentualna duplikacja wagi, gdyby do tej samej krawędzi zostały podane dwie różne
-                graph->weights[neighbor * iter + i] = weight;
-                }
+                else
+                        continue;
+        	}
         }
         return 0;
 }
@@ -80,7 +62,7 @@ void write_graph(graph_t graph, FILE* gout){
                 fprintf(gout, "\t");
                 for (int j=0; j<iter; j++){ //pętla wewnętrzna do przechodzenia po sąsiadach
                         if (graph->weights[i*iter+j] > 0.0){ //jeśli jest połączenie
-                                fprintf(gout, "%d :%lf ", j, graph->weights[i*iter+j]);
+                                fprintf(gout, "  %d :%lf", j, graph->weights[i*iter+j]);
                         }
                 }
                 fprintf(gout, "\n");
