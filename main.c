@@ -39,7 +39,7 @@ int main(int argc, char **argv)
 	char *outn = NULL;
 	int k = 0;
 	int l = 0;
-	int flagl = 0;
+	int flagl = 0;		//flaga o podaniu węzła końcowego
 	int n = 10;
    	int m = 10;
 	double x = 0.01; 
@@ -117,7 +117,7 @@ int main(int argc, char **argv)
 		fprintf(stderr, usage, progname, "\n");
 		exit(EXIT_FAILURE);
 	}
-	if (flag == 1){
+	if (flag == 1){		//jeżeli podany chociażby jeden z pierwszych 4 parametrów, dostajemy dane i szukamy ścieżkę 
 	if (inp != NULL)
 	{
 		FILE *in = fopen(inp, "r");
@@ -126,7 +126,7 @@ int main(int argc, char **argv)
 			fprintf(stderr, "%s: nie udało się otworzyć plik z danymi: %s. Przerywam działanie...\n", argv[0], inp);
 			exit(EXIT_FAILURE);
 		}
-		if (read_graph(in, graph))
+		if (read_graph(in, graph))		//czy udało się wczytać plik
 		{
 			exit(EXIT_FAILURE);
 		}
@@ -152,10 +152,10 @@ int main(int argc, char **argv)
 			out = stdout;
 		}
 	}
-	if (flagl == 0)
+	if (flagl == 0)		//jeżeli nie podany węzel końcowy, ustawiamy na maksymalnie możliwy
 		l = graph->col * graph->row - 1;
 	find_path(graph, k, l, out);
-	} else {
+	} else {			//jeżeli żaden z pierwszych 4 parametrów nie został podany, tylko generujemy graf
 		FILE *gout;
 		if (goutn != NULL)
 			gout = fopen(goutn, "w");
