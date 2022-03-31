@@ -160,7 +160,6 @@ int main(int argc, char **argv)
 	//find_path(graph, k, l, out);
 	} else {
 		FILE *gout;
-		s = 1;
 		if (goutn != NULL)
 			gout = fopen(goutn, "w");
 		else gout = stdout;
