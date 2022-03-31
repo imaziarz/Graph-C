@@ -24,8 +24,10 @@ int read_graph(FILE* in, graph_t graph){
        int i = 0;
        while(1){
                 for (;;){
-              	if ((a = fgetc(in)) == '\n')
-                	break;
+              	if ((a = fgetc(in)) == '\n'){
+                	i++;
+			break;
+		}
                 else if(a == EOF)
                 	return 0;
                 fscanf(in, "%d", &neighbor_index);
