@@ -130,8 +130,11 @@ int main(int argc, char **argv)
 		{
 			exit(EXIT_FAILURE);
 		}
-		else 
+		else{ 
+			for (int i=0; i<graph->col*graph->col*graph->row*graph->row; i++)
+				printf("waga: %lf\n", graph->weights[i]);
 			fclose(in);
+		}
 	} else 
 	{
 		fprintf(stderr, "%s: nie został podany plik z danymi. Tworzę spójny graf o rozmiarach %d, %d, z wartościami wag w zakresie [%f, %f].\n", argv[0], n, m, x, y);
@@ -153,8 +156,8 @@ int main(int argc, char **argv)
 		}
 	}
 	if (flagl == 0)
-		l = graph.col * graph.row - 1;
-	find_path(graph, k, l, out);
+		l = graph->col * graph->row - 1;
+	//find_path(graph, k, l, out);
 	} else {
 		FILE *gout;
 		s = 1;
