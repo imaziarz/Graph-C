@@ -250,6 +250,6 @@ void find_path(graph_t graph, int k, int l, FILE *out)
 		fprintf(out, "%d -%f- ", path[j], weight[j-1]);
 	}
 	fprintf(out, "%d\n", path[0]);
-	fprintf(out, "Długość ścieżki równa %f", length[l]);
+	fprintf(out, "Długość ścieżki równa %f\n", length[l]);
 
 }
