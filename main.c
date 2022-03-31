@@ -153,11 +153,10 @@ int main(int argc, char **argv)
 		}
 	}
 	if (flagl == 0)
-		l = graph.col * graph.row - 1;
+		l = graph->col * graph->row - 1;
 	find_path(graph, k, l, out);
 	} else {
 		FILE *gout;
-		s = 1;
 		if (goutn != NULL)
 			gout = fopen(goutn, "w");
 		else gout = stdout;

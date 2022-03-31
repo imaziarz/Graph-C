@@ -125,10 +125,14 @@ void generate_graph(graph_t graph, int n, int m, double x, double y, int s){
                 for (int j=0+i; j<iter; j++){
                         if ((j==i+1 && (i+1)%m) || (j==i-1 && i%m) || (j==i-m && i>=m) || (j==i+m && i<iter-m)){
                                 //powyższe warunki pozwalają na wstawienie krawędzi tylko między sąsiadami
-                                if (s || ((double)rand()/RAND_MAX > 0.5)){ //jeżeli s==0, to wstawiam krawędź z 50% prawdopodobieństwem
+                                if (s || ((double)rand()/RAND_MAX > 0.5)){ //jeżeli s==0, to wstawiam krawędź z wagą == 0 z 50% prawdopodobieństwem
                                         graph->weights[i*iter + j] = x + (double)rand()/RAND_MAX*(y-x);
                                         graph->weights[j*iter + i] = graph->weights[i*iter + j]; //duplikacja wagi
                         }
+				else {
+					graph->weights[i*iter + j] = 0.0;
+					graph->weights[j*iter + i] = 0.0;
+				}
                 }
                 }
 }
