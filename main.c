@@ -114,7 +114,7 @@ int main(int argc, char **argv)
 		for (; optind < argc; optind++)
 			fprintf(stderr, "\t\"%s\"\n", argv[optind]);
 		fprintf(stderr, "\n");
-		fprintf(stderr, usage, progname, "\n");
+		fprintf(stderr, usage, progname);
 		exit(EXIT_FAILURE);
 	}
 	if (flag == 1){		//jeżeli podany chociażby jeden z pierwszych 4 parametrów, dostajemy dane i szukamy ścieżkę 
