@@ -137,8 +137,13 @@ int main(int argc, char **argv)
 		fprintf(stderr, "%s: nie został podany plik z danymi. Tworzę spójny graf o rozmiarach %d, %d, z wartościami wag w zakresie [%f, %f].\n", argv[0], n, m, x, y);
 		FILE *gout;
 		s = 1;
-		if (goutn != NULL)
+		if (goutn != NULL){
 			gout = fopen(goutn, "w");
+			if (gout == NULL){
+				printf("Nie udało się otworzyć pliku do zapisu wygenerowanego grafu. Wypisze na stdout\n");
+				gout = stdout;
+			}
+		}
 		else gout = stdout;
 		generate_graph(graph, n, m, x, y, s);
 		write_graph(graph, gout);
@@ -151,7 +156,7 @@ int main(int argc, char **argv)
 			fprintf(stderr, "%s: nie udało się otworzyć plik do zapisu ścieżki: %s. Ścieżka będzie wypisana na stdout.\n", argv[0], outn);
 			out = stdout;
 		}
-	}
+	} else out = stdout;
 	if (flagl == 0)		//jeżeli nie podany węzel końcowy, ustawiamy na maksymalnie możliwy
 		l = graph->col * graph->row - 1;
 	find_path(graph, k, l, out);
