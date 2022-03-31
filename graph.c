@@ -61,7 +61,7 @@ int read_graph(FILE* in, graph_t graph){
                 fscanf(in, "%lf", &weight);
 
                 if (weight < 0){
-                        printf("Waga krawędzi między węzłem %d i %d jest ujemna, równa %lf. Ustawiam wartość %lf.", i, neighbor, weight, fabs(weight));
+                        printf("Waga krawędzi między węzłem %d i %d jest ujemna, równa %lf. Ustawiam wartość %lf.\n", i, neighbor, weight, fabs(weight));
                         weight = fabs(weight);
                 }
                 graph->weights[i * iter + neighbor] = weight; //ewentualna duplikacja wagi, gdyby do tej samej krawędzi zostały podane dwie różne
@@ -106,7 +106,7 @@ void generate_graph(graph_t graph, int n, int m, double x, double y, int s){
                 y = x + 1;
         }
 	if ((s!= 0) && (s!=1) && (s!=2)){
-		printf("Podana nieprawidłowa wartość flagi spójności generowanego grafu. Ustawiam wartość 2 - losowo wybierana.");
+		printf("Podana nieprawidłowa wartość flagi spójności generowanego grafu. Ustawiam wartość 2 - losowo wybierana.\n");
 		s = 2;
 	}
         graph->row = n;
