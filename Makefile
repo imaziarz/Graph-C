@@ -26,6 +26,8 @@ test6: graph
 	./graph --from -5 --to 5 --output sciezka.txt
 test7: graph
 	./graph --from 0 --to 3 --output sciezka.txt --grow 2 --gcol 3 --gfrom 4 --gto 12 --gconnect 1 --goutput gen.txt
+test8: graph
+	./graph
 .PHONY: clean
 clean:
 	-rm *.o graph
