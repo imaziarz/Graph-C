@@ -1,0 +1,175 @@
+\documentclass[]{article}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows}
+\tikzstyle{line} = [draw, -latex']
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage[]{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\PassOptionsToPackage{hyphens}{url} % url is loaded by hyperref
+\usepackage[unicode=true]{hyperref}
+\hypersetup{
+            pdftitle={Generacja grafu i odnalezienie najkrótszej ścieżki pomiędzy węzłami: graph},
+            pdfauthor={Ulyana Petrashevich, Inga Maziarz}
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+% set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+
+
+\title{\texttt{Sprawozdanie końcowe}\\Generacja grafu i odnalezienie najkrótszej ścieżki pomiędzy węzłami - \texttt{graph}}
+\author{Ulyana Petrashevich, Inga Maziarz}
+\date{02.04.2022}
+
+\begin{document}
+\maketitle
+
+\section{Opis teoretyczny zagadnienia}\label{header-n231}
+
+
+\section{Opis wywołania}\label{header-n233}
+Program \texttt{graph} akceptuje następujące argumenty wywołania:
+
+\begin{itemize}
+\item
+  \texttt{-{}-file\ filename} nazwa pliku z danymi;
+\item
+  \texttt{-{}-from\ k} podawany jest numer węzła początkowego w ścieżce; domyślnie \texttt{k\ =\ 0};
+\item
+  \texttt{-{}-to\ l} podawany jest numer węzła końcowego w ścieżce; domyślnie \texttt{l\ =\ maksymalny numer w grafie};
+\item
+  \texttt{-{}-output\ filename} nazwa pliku, w który będzie zapisywana ścieżka; domyślnie \texttt{stdout};
+\item
+  \texttt{-{}-grow\ n} określa liczbę wierszy generowanego grafu; domyślnie \texttt{n\ =\ 10};
+\item
+  \texttt{-{}-gcol\ m} określa liczbę kolumn w generowanym grafie; domyślnie \texttt{m\ =\ 10};
+\item
+  \texttt{-{}-gfrom\ x} przyjmuje granicę dolną zakresu wartości losowanych wag, domyślnie \texttt{x\ =\ 0.01};
+\item
+  \texttt{-{}-gto\ y} przyjmuje granicę górną zakresu wartości losowanych wag, domyślnie \texttt{y\ =\ 10.0};
+\item
+  \texttt{-{}-gconnect\ s} przyjmuje flagę na spójność generowanego grafa. 0 - graf niespójny, 1 - graf spójny, 2 - graf losowy;
+\item
+  \texttt{-{}-goutput\ filename} nazwa pliku, w którym będą zapisane parametry wygenerowanego grafu, domyślnie \texttt{stdout}.
+\end{itemize}
+Dla uruchomienia algorytmu znajdowania ścieżki wystarczy podać chociażby jeden parametr z nią związany, t.j. nazwa pliku z danymi, numer węzła początkowego, numer węzła końcowego i plik wyjściowy do ścieżki. Przy niepodaniu parametru program ustali wartość domyślną lub wygeneruje graf w przypadku niepodania nazwy pliku z danymi.
+
+Sześć końcowych parametrów odpowiadają za właściwości generowanego grafu, jak osobno od modułu odnalezienia ścieżki, tak i wewnątrz go.
+
+Przy niepodaniu żadnych argumentów program wygeneruje graf, oparty na wartościach domyślnych.
+
+Obowiązkowe właściwości podanego grafu:
+
+Program będzie sprawdzał, czy graf odpowiada następnym właściwościom:
+\begin{itemize}
+    \item \texttt{Graf musi mieć postać „grafu-kratki”. }
+    
+To znaczy, że po przedstawieniu grafa w postaci graficznej, jego wierzchołki mogą być złączone krawędzią tylko z wierzchołkami sąsiednimi w osi poziomej i pionowej. Przykład:
+
+0 – 1
+
+|\, \, \, \,|
+
+2 – 3  
+
+Między wierzchołkiem 0 a 3 krawędzi być nie może.
+    \item \texttt{Graf musi być spójny.}
+
+To znaczy, że od każdego wierzchołka grafu istnieje ścieżka do każdego innego wierzchołka.
+
+\end{itemize}
+
+\subsection{Widok pliku}
+Program jest uczulony na podanie danych w nieprawidłowym formacie. Może to skutkować niepoprawne traktowanie danych, aż do napotkania błędów, skutkujących przerywanie działania programu. 
+
+Schemat poprawnego formatu danych:
+
+Pierwszą linijkę zajmują dwie liczby: liczba wierszy i liczba kolumn, oddzielone od siebie minimum jedną spacją.
+
+Zaczynając od drugiej linijki, podawane są krawędzie i ich wagi. Numer wierzchołka, od którego zaczyna się krawędź, jest równy (numeru linijki - 2), np. w 2. Linijce, tuż po rozmiarach grafu, będą opisane krawędzi, prowadzące do wierzchołka 0. Pierwsze dane o krawędzi muszą być podane, odstąpiwszy od początku linijki minimum jedną tabulację lub spację. Między numerem drugiego wierzchołka, złączonego krawędzią, a jej wagą musi być napisany chociażby jeden znak nie pusty, np :. Separatorem dziesiętnym wagi musi być kropka(.). Między dwoma krawędziami muszą być dwie lub więcej spacji. Tuż po ostatniej krawędzi, odnoszącej się do danego wierzchołka, przechodzimy na nową linijkę.
+
+Nie ma potrzeby podawać wagi dwa razy symetrycznie, np. od 0 do 1 i od 1 do 0 – program duplikuje wagi przy wczytaniu.
+
+Jeżeli do wierzchołka nie chcemy przypisywać żadnych krawędzi, pozostawiamy odpowiednią linijkę pustą – bez tabulacji, spacji lub innych znaków.
+
+Przykład poprawnej formy danych:
+\begin{verbatim}
+2 2
+    2 :2.76543  1 :4.56134
+
+    1 :4.567345
+    2 :6.47586
+\end{verbatim}
+W powyższym przykładzie wierzchołek numer 1 nie ma przypisanych krawędzi (choć będzie ich miał po duplikowaniu krawędzi od wierzchołków 0 i 2).
+\section{Testy}\label{header-n233}
+
+W pliku Makefile znajdują się wywołania testów programów pod nazwami „test1”, „test2” i td. Testy, związane tylko z generatorem grafu, nazywają się „testg1” i td. Dodatkowo dodany test „help”, pokazujący zachowanie programu przy podaniu nieprawidłowych opcji.
+
+Testy, które nie da się zaimplementować do Makefile, to testy, związane z poprawnością danych w pliku. Takie testy przeprowadziłyśmy ręcznie.
+
+\begin{enumerate}
+    \item Dane wejściowe: \texttt{./graph -{}-file dane.txt -{}-from 0 -{}-to 3 -{}-output sciezka.txt}
+    
+Plik \texttt{dane.txt} zawiera:
+\begin{verbatim}
+2 2
+    1 :-5.74  2 :3.21
+    3 :10.21
+    3 :1.74
+\end{verbatim}
+Na wyjściu otrzymujemy komunikat \texttt{„ Waga krawędzi między węzłem 0 i 1 jest ujemna, równa -5.740000. Ustawiam wartość 5.740000.”}, przekazany na \texttt{stdout} i plik \texttt{sciezka.txt}, zawierający:
+\begin{verbatim}
+Najkrótsza ścieżka: 
+0 -3.210000- 2 -1.740000- 3
+Długość ścieżki równa 4.950000
+\end{verbatim}
+    \item Dane wejściowe: \texttt{./graph -{}-file dane.txt -{}-output sciezka.txt}
+
+Plik \texttt{dane.txt} zawiera:
+\begin{verbatim}
+Nie graf!
+\end{verbatim}
+Na wyjściu otrzymujemy komunikat \texttt{”Błędny format pliku z grafem. Przerywam działanie.”}, przekazany na \texttt{stderr}.
+\end{enumerate}
+\end{document}
