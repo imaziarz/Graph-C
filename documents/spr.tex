@@ -1,7 +1,7 @@
 \documentclass[]{article}
 \usepackage{tikz}
 \usetikzlibrary{shapes,arrows}
-\tikzstyle{line} = [draw, -latex']
+\tikzstyle{line} = [draw]
 \usepackage{lmodern}
 \usepackage{amssymb,amsmath}
 \usepackage{ifxetex,ifluatex}
@@ -66,7 +66,27 @@
 \maketitle
 
 \section{Opis teoretyczny zagadnienia}\label{header-n231}
-
+Program \texttt{graph} służy do wyszukiwania najkrótszej ścieżki w grafie ważonym nieskierowanym. Program zawiera funkcje wczytującą i wypisującą graf z/do pliku oraz generator grafu spójnego i niespójnego. Za wyszukiwanie najkrótszej ścieżki odpowiedzialne są funkcje \texttt{bfs} oraz \texttt{dijkstra}. \texttt{BFS}, czyli algorytm przeszukiwania wszerz, działa następująco: 
+\begin{itemize}
+\item
+  Węzeł początkowy oznaczany jest jako odwiedzony. Do kolejki dodawane są sąsiadujące z nim węzły (w kolejności od węzła z najmniejszym indeksem).
+\item
+  Odwiedzony zostaje następny węzeł w kolejce. Postępowanie jest analogiczne do wcześniejszego; do kolejki zostają dodane węzły sąsiadujące z obecnym, jednak tylko te, które nie zostały odwiedzone wcześniej.
+  
+\item
+  Proces jest powtarzany aż do momentu odwiedzenia wszystkich węzłów z kolejki. Jeżeli na końcu wszystkie węzły w grafie zostały odwiedzone, oznacza to, że przeszukiwany graf jest spójny. 
+\end{itemize}
+Jeżeli \texttt{bfs} zwróci wartość oznaczającą spójność grafu, to program przechodzi do kolejnego kroku, którym jest znalezienie najkrótszej ścieżki algorytmem Dijkstry, który działa w poniższy sposób:
+\begin{itemize}
+\item
+Długości przy węźle początkowym otrzymują wartość 0. Długość ścieżki do każdego innego węzła zostaje ustawiona na nieskończoność. 
+\item
+  Oznaczamy węzeł początkowy jako odwiedzony. Dla każdego jego sąsiada zostaje przypisana długość równa wadze krawędzi między nimi. 
+\item
+  Nieodwiedzony węzeł o najmniejszej przypisanej długości zostaje oznaczony jako odwiedzony. Dla każdego jego sąsiada zostaje obliczona wartość równa sumie długości przy obecnym węźle i wagi krawędzi między nimi. Jeżeli znaleziona wartość jest mniejsza niż przypisana do sąsiada, to zostaje ona zamieniona. 
+\item
+  Poprzedni krok jest powtarzany aż do odwiedzenia wszystkich węzłów. Ostatecznie każdy węzeł (w tym wybrany jako końcowy) ma przypisaną długość najkrótszej ścieżki od węzła początkowego. Zapamiętana ścieżka może zostać wypisana na ekran.
+\end{itemize}
 
 \section{Opis wywołania}\label{header-n233}
 Program \texttt{graph} akceptuje następujące argumenty wywołania:
@@ -105,7 +125,7 @@ Program będzie sprawdzał, czy graf odpowiada następnym właściwościom:
 \begin{itemize}
     \item \texttt{Graf musi mieć postać „grafu-kratki”. }
     
-To znaczy, że po przedstawieniu grafa w postaci graficznej, jego wierzchołki mogą być złączone krawędzią tylko z wierzchołkami sąsiednimi w osi poziomej i pionowej. Przykład:
+To znaczy, że po przedstawieniu grafu w postaci graficznej, jego wierzchołki mogą być złączone krawędzią tylko z wierzchołkami sąsiednimi w osi poziomej i pionowej. Przykład:
 
 0 – 1
 
@@ -121,15 +141,15 @@ To znaczy, że od każdego wierzchołka grafu istnieje ścieżka do każdego inn
 \end{itemize}
 
 \subsection{Widok pliku}
-Program jest uczulony na podanie danych w nieprawidłowym formacie. Może to skutkować niepoprawne traktowanie danych, aż do napotkania błędów, skutkujących przerywanie działania programu. 
+Program jest uczulony na podanie danych w nieprawidłowym formacie. Może to skutkować niepoprawnym traktowaniem danych, aż do napotkania błędów, skutkujących przerwaniem działania programu. 
 
 Schemat poprawnego formatu danych:
 
 Pierwszą linijkę zajmują dwie liczby: liczba wierszy i liczba kolumn, oddzielone od siebie minimum jedną spacją.
 
-Zaczynając od drugiej linijki, podawane są krawędzie i ich wagi. Numer wierzchołka, od którego zaczyna się krawędź, jest równy (numeru linijki - 2), np. w 2. Linijce, tuż po rozmiarach grafu, będą opisane krawędzi, prowadzące do wierzchołka 0. Pierwsze dane o krawędzi muszą być podane, odstąpiwszy od początku linijki minimum jedną tabulację lub spację. Między numerem drugiego wierzchołka, złączonego krawędzią, a jej wagą musi być napisany chociażby jeden znak nie pusty, np :. Separatorem dziesiętnym wagi musi być kropka(.). Między dwoma krawędziami muszą być dwie lub więcej spacji. Tuż po ostatniej krawędzi, odnoszącej się do danego wierzchołka, przechodzimy na nową linijkę.
+Zaczynając od drugiej linijki, podawane są krawędzie i ich wagi. Numer wierzchołka, od którego zaczyna się krawędź jest równy (numerowi linijki - 2), np. w 2. W tej linijce, tuż po rozmiarach grafu, będą opisane krawędzie prowadzące do wierzchołka 0. Pierwsze dane o krawędzi muszą być podane, odstąpiwszy od początku linijki minimum jedną tabulację lub spację. Między numerem drugiego wierzchołka, złączonego krawędzią, a jej wagą musi być napisany chociażby jeden znak niepusty, np (:). Separatorem dziesiętnym wagi musi być kropka(.). Między dwoma krawędziami muszą być dwie lub więcej spacji. Tuż po ostatniej krawędzi, odnoszącej się do danego wierzchołka, przechodzimy na nową linijkę.
 
-Nie ma potrzeby podawać wagi dwa razy symetrycznie, np. od 0 do 1 i od 1 do 0 – program duplikuje wagi przy wczytaniu.
+Nie ma potrzeby podawać wagi dwa razy symetrycznie, np. od 0 do 1 i od 1 do 0 – program duplikuje jedną z podanych wag przy wczytaniu.
 
 Jeżeli do wierzchołka nie chcemy przypisywać żadnych krawędzi, pozostawiamy odpowiednią linijkę pustą – bez tabulacji, spacji lub innych znaków.
 
@@ -141,12 +161,12 @@ Przykład poprawnej formy danych:
     1 :4.567345
     2 :6.47586
 \end{verbatim}
-W powyższym przykładzie wierzchołek numer 1 nie ma przypisanych krawędzi (choć będzie ich miał po duplikowaniu krawędzi od wierzchołków 0 i 2).
+W powyższym przykładzie wierzchołek numer 1 nie ma przypisanych krawędzi (choć będzie je miał po zduplikowaniu krawędzi od wierzchołków 0 i 2).
 \section{Testy}\label{header-n233}
 
-W pliku Makefile znajdują się wywołania testów programów pod nazwami „test1”, „test2” i td. Testy, związane tylko z generatorem grafu, nazywają się „testg1” i td. Dodatkowo dodany test „help”, pokazujący zachowanie programu przy podaniu nieprawidłowych opcji.
+W pliku Makefile znajdują się wywołania testów programów pod nazwami „test1”, „test2” itd. Testy, związane tylko z generatorem grafu, nazywają się „testg1” itd. Dodatkowo dodany test „help”, pokazujący zachowanie programu przy podaniu nieprawidłowych opcji.
 
-Testy, które nie da się zaimplementować do Makefile, to testy, związane z poprawnością danych w pliku. Takie testy przeprowadziłyśmy ręcznie.
+Testy, których nie da się zaimplementować do Makefile, to testy związane z poprawnością danych w pliku. Takie testy przeprowadziłyśmy ręcznie.
 
 \begin{enumerate}
     \item Dane wejściowe: \texttt{./graph -{}-file dane.txt -{}-from 0 -{}-to 3 -{}-output sciezka.txt}
@@ -171,5 +191,44 @@ Plik \texttt{dane.txt} zawiera:
 Nie graf!
 \end{verbatim}
 Na wyjściu otrzymujemy komunikat \texttt{”Błędny format pliku z grafem. Przerywam działanie.”}, przekazany na \texttt{stderr}.
+
+    \item Dane wejściowe: \texttt{./graph -{}-file blednygraf.txt}
+    
+Plik \texttt{blednygraf.txt} zawiera:
+\begin{verbatim}
+2 3
+        1 :1.0  4 :8.0
+        0 :1.0  2 :3.0  4 :6.0
+        1 :3.0  5 :7.0
+
+        1 :6.0  5 :2.0  0 :8.0
+        2 :7.0  4 :2.0
+\end{verbatim}
+Powyższy plik jest opisem poniższego grafu:
+\begin{figure}[!h]
+\centering
+  \begin{tikzpicture}[node distance = 2cm, auto]
+  \node [circle, draw, text centered] (zero) {\large \textbf{0}};
+    \node [circle, draw, text centered, right of = zero] (one) {\large \textbf{1}};
+      \node [circle, draw, text centered, right of = one] (two) {\large \textbf{2}};
+        \node [circle, draw, text centered, below of = zero] (three) {\large \textbf{3}};
+          \node [circle, draw, text centered, below of = one] (four) {\large \textbf{4}};
+            \node [circle, draw, text centered, below of = two] (five) {\large \textbf{5}};
+            
+                \path [line] (zero) -- node{\small 1}(one);
+                \path [line] (one) -- node{\small 3}(two);
+                \path [line] (one) -- node{\small 6}(four);
+                \path [line] (two) -- node{\small 7}(five);
+                \path [line] (four) -- node{\small 2}(five);
+                \path [line] (zero) -- node{\small 8}(four);
+    \end{tikzpicture}
+\end{figure}
+\newline
+Zgodnie z założeniem poprawności grafu, krawędzie mogą istnieć tylko między sąsiadującymi węzłami. Program wykrywa tę niepoprawność i wypisuje komunikat:
+\begin{verbatim}
+    Błędny format pliku z grafem. Między węzłem 0 a 4 
+    nie może istnieć połączenie. Przerywam działanie.
+\end{verbatim}
+
 \end{enumerate}
 \end{document}
