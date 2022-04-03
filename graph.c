@@ -24,24 +24,25 @@ int read_graph(FILE* in, graph_t graph){
        int i = 0;
        while(1){
                 for (;;){
-              	if ((a = fgetc(in)) == '\n'){
+			a = getc(in);
+              	if (a  == '\n'){
                 	i++;
 			break;
 		}
                 else if(a == EOF)
                 	return 0;
                 fscanf(in, "%d", &neighbor_index);
-                printf("neighbor index: %d\n", neighbor_index);
                 fscanf(in, "%c", &b);
                 fscanf(in, "%c", &c);
                 fscanf(in, "%lf", &weight);
-                printf("waga: %lf\n", weight);
+		 if (!(neighbor_index == i+1 || neighbor_index == i-1 || neighbor_index == i-(graph->col) || neighbor_index == i+(graph->col))){
+                       fprintf(stderr, "Błędny format pliku z grafem. Między węzłem %d a %d nie może istnieć połączenie. Przerywam działanie.\n", i, neighbor_index);
+                        return 1;
+                }
 		if (weight < 0){
 			printf("Waga krawędzi między węzłem %d i %d jest ujemna, równa %lf. Ustawiam wartość %lf.\n", i, neighbor_index, weight, fabs(weight));
 			weight = fabs(weight);
 		}
-		if (neighbor_index == i)	//dla sprawdzania
-			printf("Błąd\n");
                 graph->weights[i * iter + neighbor_index] = weight;
 		graph->weights[neighbor_index * iter + i] = weight;
                 if ((a = fgetc(in)) == '\n'){
