@@ -109,22 +109,25 @@ void generate_graph(graph_t graph, int n, int m, double x, double y, int s){
 	int blank = -1;
 	if (!s)
 		blank = rand()%iter; //losowanie który wierzchołek nie będzie miał żadnej krawędzi
-
-        for (int i=0; i<iter; i++) //iteruję po elementach macierzy tylko po jednej przekątnej - nastąpi zduplikowanie wag na drugą przekątną
-                for (int j=0+i; j<iter; j++){
+        for (int i=0; i<iter; i++){ //iteruję po elementach macierzy tylko po jednej przekątnej - nastąpi zduplikowanie wag na drugą przekątną
+                for (int j=i; j<iter; j++){
                         if ((j==i+1 && (i+1)%m) || (j==i-1 && i%m) || (j==i-m && i>=m) || (j==i+m && i<iter-m)){
                                 //powyższe warunki pozwalają na wstawienie krawędzi tylko między sąsiadami
-                                if ((s || ((double)rand()/RAND_MAX > 0.5)) && (i != blank)){ //jeżeli s==0, to wstawiam krawędź z wagą == 0 z 50% prawdopodobieństwem
-					//jeżeli numer węzła == blank to nie wstawiam do niego krawędzi
-                                        graph->weights[i*iter + j] = x + (double)rand()/RAND_MAX*(y-x);
-                                        graph->weights[j*iter + i] = graph->weights[i*iter + j]; //duplikacja wagi
+                                	if ((s || ((double)rand()/RAND_MAX > 0.5))){ //jeżeli s==0, to wstawiam krawędź z wagą == 0 z 50% prawdopodobieństwem
+                                        	graph->weights[i*iter + j] = x + (double)rand()/RAND_MAX*(y-x);
+                                        	graph->weights[j*iter + i] = graph->weights[i*iter + j]; //duplikacja wagi
                         }
 				else {
 					graph->weights[i*iter + j] = 0.0;
 					graph->weights[j*iter + i] = 0.0;
 				}
+				 if (i == blank || j == blank){
+                                        graph->weights[i*iter + j] = 0.0;
+                                        graph->weights[j*iter + i] = 0.0;
                 }
                 }
+	}
+}
 }
 
 
