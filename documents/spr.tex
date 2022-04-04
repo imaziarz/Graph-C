@@ -162,9 +162,518 @@ Przykład poprawnej formy danych:
     2 :6.47586
 \end{verbatim}
 W powyższym przykładzie wierzchołek numer 1 nie ma przypisanych krawędzi (choć będzie je miał po zduplikowaniu krawędzi od wierzchołków 0 i 2).
+Postać symboliczna:
+
+2\texttt{\verbvisiblespace}2\textbackslash n
+
+\textbackslash t2\texttt{\verbvisiblespace}:2.76543\texttt{\verbvisiblespace}\texttt{\verbvisiblespace}1\texttt{\verbvisiblespace}:4.56134\n
+
+\textbackslash n
+
+\textbackslash t1\texttt{\verbvisiblespace}:4.567345\textbackslash n
+
+\textbackslash t2\texttt{\verbvisiblespace}:6.47586EOF
+
 \section{Testy}\label{header-n233}
 
 W pliku Makefile znajdują się wywołania testów programów pod nazwami „test1”, „test2” itd. Testy, związane tylko z generatorem grafu, nazywają się „testg1” itd. Dodatkowo dodany test „help”, pokazujący zachowanie programu przy podaniu nieprawidłowych opcji.
+\begin{itemize}
+    \item help
+    ./graph -h
+    Test służy do sprawdzania działania pliku przy podaniu nieopisanych opcji. Program wyświetla komunikat i instrukcję użycia.
+\begin{verbatim}
+./graph: invalid option -- 'h'
+Usage: ./graph [[--file data_file] [--from k] [--to l] [--output output_file]] 
+    [[--grow n] [--gcol m] [--gfrom x] [--gto y] [--gconnect s]
+        [--goutput data_output_file]]
+    if any od first four parameters was given then
+        if data_file is given then
+            reads graph points from data_file
+            finds path
+                -from k (>= 0 and <= maximum node nr.) node (0 by default)
+                -to l (>= 0 and <= maximum node nr.) node (maximum node nr.by default)
+            writes the path to output_file (stdout by default)
+        else (data_file not given)
+            generate connected graph
+                -of n (> 0) rows (10 by default)
+                -of m (> 0) columns (10 by default)
+                -with edge weights within <x, y> range (<0.1, 10> by default) 
+            write generated graph to data_output_file (stdout by default)
+            finds path
+                -from k (>= 0 and <= maximum node nr.) node (0 by default)
+                -to l (>= 0 and <= maximum node nr.) node (maximum node nr.by default)
+            writes the path to output_file (stdout by default)
+        endif
+    else (none of first four parameters was given) then
+        generate graph
+            -of n (> 0) rows (10 by default)
+            -of m (> 0) columns (10 by default)
+            -with edge weights within <x, y> range (<0.1, 10> by default) 
+            -connectivity defined by s: 0 - not connected, 1 - connected,
+                2 - random one (2 by default)
+        write generated graph to data_output_file (stdout by default)
+    endif
+make: *** [Makefile:8: help] Error 1
+\end{verbatim}
+    \item test1:
+    ./graph -{}-file dane.txt -{}-from 0 -{}-to 3 -{}-output sciezka.txt
+    
+    Program pobiera dane z pliku przygotowanego dane.txt i szuka ścieżki od wierzchołka 0 do wierzchołka 3, zapisując ją do pliku sciezka.txt.
+    
+    Plik dane.txt zawiera:
+\begin{verbatim}
+2 3
+	1 :1.0  3 :4.0
+	0 :1.0  2 :3.0  4 :6.0
+	1 :3.0  5 :7.0
+	0 :4.0  4 :10.0
+	1 :6.0  3 :10.0  5 :2.0
+	2 :7.0  4 :2.0
+\end{verbatim}
+Po uruchomieniu testu do pliku sciezka.txt zostały dodane dane:
+\begin{verbatim}
+Najkrótsza ścieżka: 
+0 -4.000000- 3
+Długość ścieżki równa 4.000000
+\end{verbatim}
+\item testg1: ./graph -{}-grow 2 -{}-gcol 3 -{}-gfrom 4 -{}-gto 12 -{}-gconnect 1 -{}-goutput gen.txt
+
+Program generuje graf o 2 wierszach, 3 kolumnach z wagami w zakresie [4,12], spójny, do pliku gen.txt.
+
+Do pliku gen.txt zostały zapisane dane:
+\begin{verbatim}
+2 3
+	  1 :5.193650  3 :5.579993
+	  0 :5.193650  2 :7.949110  4 :5.549342
+	  1 :7.949110  5 :7.208232
+	  0 :5.579993  4 :8.846293
+	  1 :5.549342  3 :8.846293  5 :11.670649
+	  2 :7.208232  4 :11.670649
+\end{verbatim}
+\item testg2: ./graph -{}-grow 3 -{}-gcol 3 -{}-gfrom 1 -{}-gto 10 -{}-gconnect 0 -{}-goutput gen.txt
+
+Program generuje graf o 3 wierszach, 3 kolumnach, z wagami w zakresie [1,10], niespójny, do pliku gen.txt
+
+Do pliku gen.txt zostały zapisane dane:
+\begin{verbatim}
+3 3
+
+	  2 :4.019620
+	  1 :4.019620
+	  4 :5.493351  6 :4.151664
+	  3 :5.493351  5 :4.330304  7 :9.003724
+	  4 :4.330304  8 :6.377423
+	  3 :4.151664  7 :7.477356
+	  4 :9.003724  6 :7.477356
+	  5 :6.377423    
+\end{verbatim}
+\item testg3: ./graph -{}-grow 3 -{}-gcol 3 -{}-gfrom 1 -{}-gto 10 -{}-goutput gen.txt
+
+Program generuje graf o 3 wierszach, 3 kolumnach, z wagami w zakresie [1,10], spójność losowa, do pliku gen.txt.
+
+Do pliku gen.txt zostały zapisane dane:
+\begin{verbatim}
+3 3
+	  1 :9.744961  3 :4.068821
+	  0 :9.744961  2 :2.057102  4 :7.917296
+	  1 :2.057102  5 :4.975027
+	  0 :4.068821  4 :6.742813  6 :3.497021
+	  1 :7.917296  3 :6.742813  5 :8.205188  7 :8.080706
+	  2 :4.975027  4 :8.205188  8 :2.629625
+	  3 :3.497021  7 :8.844706
+	  4 :8.080706  6 :8.844706  8 :7.227123
+	  5 :2.629625  7 :7.227123
+\end{verbatim}
+\item testg4: ./graph -{}-grow -3 -{}-gcol 3 -{}-gfrom 1 -{}-gto 10 -{}-gconnect 1 -{}-goutput gen.txt
+
+Test jest stworzony by sprawdzić, jak zachowa się program, gdy przekażemy ujemną liczbę wierszy lub kolumn. Musi ustawić wartość domyslną.
+
+Program przekazał na stdout komunikat:
+\begin{verbatim}
+Liczba wierszy musi być dodatnia. Ustawiam wartość 10.
+\end{verbatim}
+
+Do pliku gen.txt dodane dane:
+\begin{verbatim}
+10 3
+	  1 :9.521784  3 :1.701164
+	  0 :9.521784  2 :5.748943  4 :8.938465
+	  1 :5.748943  5 :2.530003
+	  0 :1.701164  4 :7.268885  6 :8.841238
+	  1 :8.938465  3 :7.268885  5 :4.114816  7 :5.534049
+	  2 :2.530003  4 :4.114816  8 :3.170969
+	  3 :8.841238  7 :7.033253  9 :2.314859
+	  4 :5.534049  6 :7.033253  8 :3.393655  10 :7.541990
+	  5 :3.170969  7 :3.393655  11 :5.012396
+	  6 :2.314859  10 :7.201710  12 :7.579402
+	  7 :7.541990  9 :7.201710  11 :3.206962  13 :2.010293
+	  8 :5.012396  10 :3.206962  14 :3.690284
+	  9 :7.579402  13 :1.820537  15 :8.809376
+	  10 :2.010293  12 :1.820537  14 :6.245075  16 :3.823260
+	  11 :3.690284  13 :6.245075  17 :2.400434
+	  12 :8.809376  16 :2.119280  18 :2.688436
+	  13 :3.823260  15 :2.119280  17 :5.210797  19 :8.767985
+	  14 :2.400434  16 :5.210797  20 :6.244757
+	  15 :2.688436  19 :1.701104  21 :8.289769
+	  16 :8.767985  18 :1.701104  20 :6.945921  22 :6.450046
+	  17 :6.244757  19 :6.945921  23 :7.228234
+	  18 :8.289769  22 :8.475924  24 :3.718931
+	  19 :6.450046  21 :8.475924  23 :6.069472  25 :2.590740
+	  20 :7.228234  22 :6.069472  26 :8.252980
+	  21 :3.718931  25 :8.240441  27 :8.623992
+	  22 :2.590740  24 :8.240441  26 :9.567839  28 :1.634096
+	  23 :8.252980  25 :9.567839  29 :6.165982
+	  24 :8.623992  28 :4.580236
+	  25 :1.634096  27 :4.580236  29 :7.835806
+	  26 :6.165982  28 :7.835806
+\end{verbatim}
+
+\item test2: ./graph -{}-file gen.txt -{}-from 0 -{}-output sciezka.txt
+
+Program wczytuje graf(może być wcześniej wygenerowany) z pliku gen.txt i szuka ścieżki od 0 węzła do maksymalnego. Ścieżka zapisana będzie do pliku sciezka.txt.
+
+Przyjmijmy, że plik gen.txt zawiera:
+\begin{verbatim}
+3 3
+	  1 :9.744961  3 :4.068821
+	  0 :9.744961  2 :2.057102  4 :7.917296
+	  1 :2.057102  5 :4.975027
+	  0 :4.068821  4 :6.742813  6 :3.497021
+	  1 :7.917296  3 :6.742813  5 :8.205188  7 :8.080706
+	  2 :4.975027  4 :8.205188  8 :2.629625
+	  3 :3.497021  7 :8.844706
+	  4 :8.080706  6 :8.844706  8 :7.227123
+	  5 :2.629625  7 :7.227123
+\end{verbatim}
+
+Do pliku sciezka.txt zostały dodane dane:
+\begin{verbatim}
+Najkrótsza ścieżka:
+0 -9.744961- 1 -2.057102- 2 -4.975027- 5 -2.629625- 8
+Długość ścieżki równa 19.406715
+\end{verbatim}
+
+Przyjmijmy, że plik gen.txt zawiera:
+\begin{verbatim}
+3 3
+	  3 :8.550519
+	  4 :6.943854
+
+	  0 :8.550519  4 :7.743385
+	  1 :6.943854  3 :7.743385  7 :1.404512
+
+	  7 :8.996154
+	  4 :1.404512  6 :8.996154
+
+\end{verbatim}
+
+Program przekazał na stderr:
+\begin{verbatim}
+Podany graf nie jest spójny. Przerywam działanie.
+make: *** [Makefile:20: test2] Error 1
+\end{verbatim}
+\item test3: ./graph -{}-file gen.txt
+
+Program przyjmuje tylko plik z grafem. Musi znaleźć ścieżkę od wierzchołka 0 do maksymalnego i wypisać na stdout.
+
+Załózmy, że plik gen.txt zawiera:
+\begin{verbatim}
+3 3
+	  1 :9.744961  3 :4.068821
+	  0 :9.744961  2 :2.057102  4 :7.917296
+	  1 :2.057102  5 :4.975027
+	  0 :4.068821  4 :6.742813  6 :3.497021
+	  1 :7.917296  3 :6.742813  5 :8.205188  7 :8.080706
+	  2 :4.975027  4 :8.205188  8 :2.629625
+	  3 :3.497021  7 :8.844706
+	  4 :8.080706  6 :8.844706  8 :7.227123
+	  5 :2.629625  7 :7.227123
+\end{verbatim}
+Na stdout wypisano:
+\begin{verbatim}
+Najkrótsza ścieżka: 
+0 -9.744961- 1 -2.057102- 2 -4.975027- 5 -2.629625- 8
+Długość ścieżki równa 19.406715
+\end{verbatim}
+\item test4: ./graph --from 0 --to 6 --output sciezka.txt
+
+Test jest stworzony by sprawdzić, jak zachowa się program, gdy nie zostanie podany plik z danymi. Musi wyświetlić odpowiedni komunikat, wygenerować graf spójny o rozmiarach 10x10, o wagach w zakresie [0.1, 10], znaleźć ścieżke od wierzchołka 0 do 6 i zapisać do pliku sciezka.txt
+
+Na stdout zostały przekazane następne dane:
+\begin{verbatim}
+./graph: nie został podany plik z danymi. Tworzę spójny graf o rozmiarach 10, 10, 
+z wartościami wag w zakresie [0.010000, 10.000000].
+10 10
+	  1 :3.655630  10 :2.612224
+	  0 :3.655630  2 :1.070027  11 :4.865590
+	  1 :1.070027  3 :8.806976  12 :9.669014
+	  2 :8.806976  4 :3.790733  13 :6.062454
+	  3 :3.790733  5 :2.862130  14 :2.547590
+	  4 :2.862130  6 :5.637390  15 :5.026725
+	  5 :5.637390  7 :3.254020  16 :4.216804
+	  6 :3.254020  8 :5.339291  17 :2.490274
+	  7 :5.339291  9 :4.132861  18 :1.683471
+	  8 :4.132861  19 :1.173396
+	  0 :2.612224  11 :7.098354  20 :9.458073
+	  1 :4.865590  10 :7.098354  12 :3.070200  21 :7.371739
+	  2 :9.669014  11 :3.070200  13 :9.645168  22 :8.360334
+	  3 :6.062454  12 :9.645168  14 :9.562849  23 :4.488464
+	  4 :2.547590  13 :9.562849  15 :5.001660  24 :0.601119
+	  5 :5.026725  14 :5.001660  16 :2.623777  25 :8.867515
+	  6 :4.216804  15 :2.623777  17 :4.246750  26 :5.226001
+	  7 :2.490274  16 :4.246750  18 :9.927542  27 :9.102340
+	  8 :1.683471  17 :9.927542  19 :4.032977  28 :9.596557
+	  9 :1.173396  18 :4.032977  29 :2.893073
+	  10 :9.458073  21 :0.095431  30 :2.458686
+	  11 :7.371739  20 :0.095431  22 :5.430663  31 :5.722821
+	  12 :8.360334  21 :5.430663  23 :7.475411  32 :8.674683
+	  13 :4.488464  22 :7.475411  24 :9.929625  33 :2.814702
+	  14 :0.601119  23 :9.929625  25 :1.164957  34 :4.062486
+	  15 :8.867515  24 :1.164957  26 :4.488173  35 :2.328353
+	  16 :5.226001  25 :4.488173  27 :1.160841  36 :3.946247
+	  17 :9.102340  26 :1.160841  28 :5.388552  37 :8.522580
+	  18 :9.596557  27 :5.388552  29 :3.591415  38 :3.748887
+	  19 :2.893073  28 :3.591415  39 :8.085429
+	  20 :2.458686  31 :8.069879  40 :8.740547
+	  21 :5.722821  30 :8.069879  32 :8.676548  41 :0.693655
+	  22 :8.674683  31 :8.676548  33 :7.608062  42 :2.923298
+	  23 :2.814702  32 :7.608062  34 :5.909656  43 :7.535604
+	  24 :4.062486  33 :5.909656  35 :2.025637  44 :9.932633
+	  25 :2.328353  34 :2.025637  36 :7.132161  45 :4.908711
+	  26 :3.946247  35 :7.132161  37 :0.028063  46 :9.580847
+	  27 :8.522580  36 :0.028063  38 :0.339374  47 :5.740884
+	  28 :3.748887  37 :0.339374  39 :7.056258  48 :9.004057
+	  29 :8.085429  38 :7.056258  49 :5.670509
+	  30 :8.740547  41 :9.860960  50 :0.169014
+	  31 :0.693655  40 :9.860960  42 :9.722995  51 :4.349134
+	  32 :2.923298  41 :9.722995  43 :2.487366  52 :0.883836
+	  33 :7.535604  42 :2.487366  44 :8.285380  53 :7.865918
+	  34 :9.932633  43 :8.285380  45 :9.396416  54 :1.876795
+	  35 :4.908711  44 :9.396416  46 :1.614805  55 :7.481845
+	  36 :9.580847  45 :1.614805  47 :9.936674  56 :0.355352
+	  37 :5.740884  46 :9.936674  48 :6.158393  57 :0.630329
+	  38 :9.004057  47 :6.158393  49 :7.953414  58 :9.071690
+	  39 :5.670509  48 :7.953414  59 :6.529985
+	  40 :0.169014  51 :5.489018  60 :1.097328
+	  41 :4.349134  50 :5.489018  52 :6.462618  61 :2.621179
+	  42 :0.883836  51 :6.462618  53 :5.996038  62 :6.480681
+	  43 :7.865918  52 :5.996038  54 :2.202025  63 :6.325412
+	  44 :1.876795  53 :2.202025  55 :2.221565  64 :9.248283
+	  45 :7.481845  54 :2.221565  56 :5.329469  65 :7.882074
+	  46 :0.355352  55 :5.329469  57 :9.109244  66 :5.488482
+	  47 :0.630329  56 :9.109244  58 :7.605069  67 :3.458377
+	  48 :9.071690  57 :7.605069  59 :7.965848  68 :8.478905
+	  49 :6.529985  58 :7.965848  69 :1.743758
+	  50 :1.097328  61 :5.831767  70 :7.875321
+	  51 :2.621179  60 :5.831767  62 :3.610553  71 :7.436572
+	  52 :6.480681  61 :3.610553  63 :5.357166  72 :3.547226
+	  53 :6.325412  62 :5.357166  64 :7.781923  73 :1.515558
+	  54 :9.248283  63 :7.781923  65 :4.167555  74 :5.735337
+	  55 :7.882074  64 :4.167555  66 :0.587249  75 :0.697540
+	  56 :5.488482  65 :0.587249  67 :1.224355  76 :1.674577
+	  57 :3.458377  66 :1.224355  68 :7.150158  77 :3.835533
+	  58 :8.478905  67 :7.150158  69 :7.660615  78 :3.630839
+	  59 :1.743758  68 :7.660615  79 :6.027559
+	  60 :7.875321  71 :3.986027  80 :5.842404
+	  61 :7.436572  70 :3.986027  72 :5.275842  81 :9.305496
+	  62 :3.547226  71 :5.275842  73 :3.724478  82 :4.385086
+	  63 :1.515558  72 :3.724478  74 :4.793978  83 :1.329548
+	  64 :5.735337  73 :4.793978  75 :7.833463  84 :2.759826
+	  65 :0.697540  74 :7.833463  76 :9.798453  85 :9.567221
+	  66 :1.674577  75 :9.798453  77 :8.581593  86 :7.673774
+	  67 :3.835533  76 :8.581593  78 :3.177773  87 :6.018165
+	  68 :3.630839  77 :3.177773  79 :3.030940  88 :6.714999
+	  69 :6.027559  78 :3.030940  89 :3.800088
+	  70 :5.842404  81 :4.536499  90 :0.882554
+	  71 :9.305496  80 :4.536499  82 :9.525425  91 :5.113748
+	  72 :4.385086  81 :9.525425  83 :1.570094  92 :0.749780
+	  73 :1.329548  82 :1.570094  84 :6.778324  93 :8.710252
+	  74 :2.759826  83 :6.778324  85 :4.575313  94 :4.438939
+	  75 :9.567221  84 :4.575313  86 :2.341090  95 :0.602872
+	  76 :7.673774  85 :2.341090  87 :8.414966  96 :8.173494
+	  77 :6.018165  86 :8.414966  88 :5.868714  97 :7.720462
+	  78 :6.714999  87 :5.868714  89 :1.897972  98 :0.253799
+	  79 :3.800088  88 :1.897972  99 :2.514440
+	  80 :0.882554  91 :3.217520
+	  81 :5.113748  90 :3.217520  92 :8.077262
+	  82 :0.749780  91 :8.077262  93 :5.264266
+	  83 :8.710252  92 :5.264266  94 :3.015973
+	  84 :4.438939  93 :3.015973  95 :7.644483
+	  85 :0.602872  94 :7.644483  96 :3.845859
+	  86 :8.173494  95 :3.845859  97 :0.689748
+	  87 :7.720462  96 :0.689748  98 :0.822256
+	  88 :0.253799  97 :0.822256  99 :9.854024
+	  89 :2.514440  98 :9.854024
+\end{verbatim}
+Do pliku sciezka.txt dodane dane:
+\begin{verbatim}
+Najkrótsza ścieżka: 
+0 -3.655630- 1 -1.070027- 2 -8.806976- 3 -3.790733- 4 -2.862130- 5 -5.637390- 6
+Długość ścieżki równa 25.822886
+\end{verbatim}
+\item test5: ./graph -{}-from 0 -{}-to 15 -{}-output sciezka.txt -{}-grow 2 -{}-gcol 2
+
+
+Test jest przeprowadzany, żeby zobaczyć, jak zachowa się program, gdy numer wierzchołka końcowego będzie wykraczał poza zakres numerów wierzchołków grafu. Musi przyjąć najwięksy możliwy numer wierzchołka.
+
+Na stdout zostały przekazane:
+\begin{verbatim}
+./graph: nie został podany plik z danymi. Tworzę spójny graf o rozmiarach 2, 2, 
+z wartościami wag w zakresie [0.010000, 10.000000].
+2 2
+	  1 :9.016836  2 :1.360089
+	  0 :9.016836  3 :9.087418
+	  0 :1.360089  3 :4.407419
+	  1 :9.087418  2 :4.407419
+Numer węzła początkowego znajduje się za przedziałem grafu. Ustawiam wartość 3.
+\end{verbatim}
+
+Do pliku sciezka.txt:
+\begin{verbatim}
+Najkrótsza ścieżka: 
+0 -1.360089- 2 -4.407419- 3
+Długość ścieżki równa 5.767508
+\end{verbatim}
+\item test6: ./graph -{}-from -5 -{}-to 5 -{}-output sciezka.txt --grow 3 --gcol 3
+
+Test służy do sprawdzania działania programu w przypadku, gdy zostanie podany ujemny numer wierzchołku. Program musi ustawić wartość tego wierzchołka jako 0.
+
+Na stdout otrzymujemy:
+\begin{verbatim}
+./graph: nie został podany plik z danymi. Tworzę spójny graf o rozmiarach 3, 3,
+z wartościami wag w zakresie [0.010000, 10.000000].
+3 3
+	  1 :0.017384  3 :8.733991
+	  0 :0.017384  2 :9.364576  4 :8.515349
+	  1 :9.364576  5 :8.395516
+	  0 :8.733991  4 :5.120704  6 :6.379204
+	  1 :8.515349  3 :5.120704  5 :3.054419  7 :4.072059
+	  2 :8.395516  4 :3.054419  8 :3.311567
+	  3 :6.379204  7 :6.759633
+	  4 :4.072059  6 :6.759633  8 :1.798294
+	  5 :3.311567  7 :1.798294
+Numer węzła początkowego musi być większy lub równy 0. Ustawiam wartość 0.
+\end{verbatim}
+Do pliku sciezka.txt zostały dodane dane:
+\begin{verbatim}
+Najkrótsza ścieżka: 
+0 -0.017384- 1 -8.515349- 4 -3.054419- 5
+Długość ścieżki równa 11.587152
+\end{verbatim}
+\item test7: ./graph -{}-from 0 -{}-to 3 -{}-output sciezka.txt -{}-grow 2 -{}-gcol 3 -{}-gfrom 4 -{}-gto 12 -{}-gconnect 1 -{}-goutput gen.txt
+
+Test przeznaczony do sprawdzenia poprawności działania algorytmu odnajdywania ścieżki i generatora grafu.
+
+\item test8: ./graph
+
+Test przeznaczony, by sprawdzić, jak zachowa się program przy niepodaniu żadnych argumentów. Musi wygenerować graf o rozmiarach 10x10, wagach w zakresie [0.1, 10], z losową spójnością, i przekazać na stdout.
+
+Wynik na stdout:
+\begin{verbatim}
+10 10
+
+	  11 :2.686477
+	  3 :6.962296
+	  2 :6.962296  4 :6.428726  13 :3.339158
+	  3 :6.428726  14 :8.122333
+	  6 :2.439876
+	  5 :2.439876  7 :4.148008
+	  6 :4.148008  17 :5.581391
+
+	  19 :0.028774
+	  11 :8.016655
+	  1 :2.686477  10 :8.016655
+	  22 :3.553451
+	  3 :3.339158  14 :5.349312  23 :9.782359
+	  4 :8.122333  13 :5.349312
+
+
+	  7 :5.581391
+	  28 :6.719558
+	  9 :0.028774  29 :4.032725
+
+	  22 :9.109316
+	  12 :3.553451  21 :9.109316  23 :8.289380  32 :7.486189
+	  13 :9.782359  22 :8.289380  24 :9.075430
+	  23 :9.075430  25 :2.628881
+	  24 :2.628881  35 :0.373052
+
+	  37 :4.597610
+	  18 :6.719558
+	  19 :4.032725  39 :8.789516
+
+
+	  22 :7.486189  33 :4.739009  42 :7.541546
+	  32 :4.739009
+	  35 :3.139264
+	  25 :0.373052  34 :3.139264
+
+	  27 :4.597610
+
+	  29 :8.789516
+	  41 :8.765130  50 :6.376369
+	  40 :8.765130
+	  32 :7.541546  43 :0.531902
+	  42 :0.531902  44 :4.410621
+	  43 :4.410621
+	  46 :0.743160
+	  45 :0.743160  56 :6.205323
+	  48 :7.449568
+	  47 :7.449568  49 :0.320291
+	  48 :0.320291
+	  40 :6.376369  60 :8.902086
+	  52 :4.097223  61 :4.855210
+	  51 :4.097223
+	  54 :7.219384
+	  53 :7.219384  55 :4.232222  64 :2.405176
+	  54 :4.232222  56 :8.785330
+	  46 :6.205323  55 :8.785330  57 :9.159727  66 :1.611258
+	  56 :9.159727  58 :3.869703  67 :6.039311
+	  57 :3.869703  68 :8.217539
+	  69 :3.122824
+	  50 :8.902086  70 :0.688998
+	  51 :4.855210  62 :4.781214  71 :8.834890
+	  61 :4.781214  63 :2.386874  72 :7.343029
+	  62 :2.386874
+	  54 :2.405176
+	  66 :2.080839
+	  56 :1.611258  65 :2.080839
+	  57 :6.039311
+	  58 :8.217539  69 :4.486197
+	  59 :3.122824  68 :4.486197
+	  60 :0.688998  71 :2.072516
+	  61 :8.834890  70 :2.072516  72 :5.185341  81 :3.431125
+	  62 :7.343029  71 :5.185341  73 :3.497840
+	  72 :3.497840
+	  84 :1.346539
+	  85 :4.632048
+	  77 :4.454826  86 :0.515034
+	  76 :4.454826  78 :7.933454
+	  77 :7.933454
+	  89 :2.866110
+	  81 :3.712940
+	  71 :3.431125  80 :3.712940
+
+	  84 :6.610847
+	  74 :1.346539  83 :6.610847  85 :8.933577  94 :1.132275
+	  75 :4.632048  84 :8.933577  86 :6.983580
+	  76 :0.515034  85 :6.983580  87 :1.615628
+	  86 :1.615628  97 :1.622864
+	  89 :6.241969
+	  79 :2.866110  88 :6.241969  99 :0.771039
+	  91 :9.923871
+	  90 :9.923871  92 :2.055055
+	  91 :2.055055
+	  94 :2.075123
+	  84 :1.132275  93 :2.075123
+	  96 :5.516315
+	  95 :5.516315
+	  87 :1.622864  98 :7.159846
+	  97 :7.159846  99 :4.568931
+	  89 :0.771039  98 :4.568931
+
+\end{verbatim}
+\end{itemize}
 
 Testy, których nie da się zaimplementować do Makefile, to testy związane z poprawnością danych w pliku. Takie testy przeprowadziłyśmy ręcznie.
 
@@ -254,6 +763,7 @@ sugerował, że przyjmowany graf powinien być skierowany. Program \texttt{graph
 	0 :0.896183 5 :0.449257 8 :0.750068
 	...
 \end{verbatim}
+Program można przekształcić tak, aby przyjmował graf skierowany, poprzez usunięcie linijki 47 w pliku \texttt{graph.c} (graph->weights[neighbor\_index * iter + i] = weight;). Wtedy graf nie będzie duplikował wagi.
 
 Inną problematyczną kwestią była próba dostosowania funkcji \texttt{read\_graph} w ten sposób, aby funkcja interpretowała dane poprawnie pomimo niepełnej zgodności z wymogami formatu pliku. Początkowo funkcja read zawierała warunki określające ilość iteracji w linii,
 \begin{verbatim}
