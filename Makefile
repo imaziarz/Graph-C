@@ -14,6 +14,8 @@ testg2: graph
 	./graph --grow 3 --gcol 3 --gfrom 1 --gto 10 --gconnect 0 --goutput gen.txt
 testg3: graph
 	./graph --grow 3 --gcol 3 --gfrom 1 --gto 10 --goutput gen.txt
+testg4: graph
+	./graph --grow -3 --gcol 3 --gfrom 1 --gto 10 --gconnect 1 --goutput gen.txt
 test2: graph
 	./graph --file gen.txt --from 0 --output sciezka.txt
 test3: graph
@@ -21,9 +23,9 @@ test3: graph
 test4: graph
 	./graph --from 0 --to 6 --output sciezka.txt
 test5: graph
-	./graph --from 0 --to 15 --output sciezka.txt
+	./graph --from 0 --to 15 --output sciezka.txt --grow 2 --gcol 2
 test6: graph
-	./graph --from -5 --to 5 --output sciezka.txt
+	./graph --from -5 --to 5 --output sciezka.txt --grow 3 --gcol 3
 test7: graph
 	./graph --from 0 --to 3 --output sciezka.txt --grow 2 --gcol 3 --gfrom 4 --gto 12 --gconnect 1 --goutput gen.txt
 test8: graph
