@@ -205,7 +205,7 @@ Plik \texttt{blednygraf.txt} zawiera:
         2 :7.0  4 :2.0
 \end{verbatim}
 Powyższy plik jest opisem poniższego grafu:
-\begin{figure}[!h]
+\begin{figure}[-h!]
 \centering
   \begin{tikzpicture}[node distance = 2cm, auto]
   \node [circle, draw, text centered] (zero) {\large \textbf{0}};
@@ -231,4 +231,27 @@ Zgodnie z założeniem poprawności grafu, krawędzie mogą istnieć tylko międ
 \end{verbatim}
 
 \end{enumerate}
+
+\section{Błędy i wnioski}\label{header-n233}
+Podczas pisania programu problemem okazało się niedoprecyzowanie wymagań dotyczących budowy grafu. Plik testowy \texttt{mygraph} o poniższej zawartości (tu widoczne pierwszych kilka linii pliku)
+\begin{verbatim}
+7 4
+	 1 :0.8864916775696521  4 :0.2187532451857941 
+	 5 :0.2637754478952221  2 :0.6445273453144537  0 :0.4630166785185348 
+	 6 :0.8650384424149676  3 :0.42932761976709255  1 :0.6024952385895536 
+	 7 :0.5702072705027322  2 :0.86456124269257 
+	 8 :0.9452864187437506  0 :0.8961825862332892  5 :0.9299058855442358 
+	 ...
+	 \end{verbatim}
+sugerował, że przyjmowany graf powinien być skierowany. Program \texttt{graph} obsługuje jednak tylko grafy nieskierowane, więc ten problem został zlikwidowany poprzez przekształcenie grafu skierowanego w nieskierowany dzięki duplikacji wag pomiędzy konkretnymi węzłami. Wczytując plik za pomocą funkcji \texttt{read\_graph}, a następnie wypisując go przy użyciu \texttt{write\_graph} otrzymujemy już odpowiedni graf: 
+\bigskip
+\begin{verbatim}
+7 4
+	1 :0.463017 4 :0.896183 
+	0 :0.463017 2 :0.602495 5 :0.595644 
+	1 :0.602495 3 :0.864561 6 :0.200570 
+	2 :0.864561 7 :0.797053 
+	0 :0.896183 5 :0.449257 8 :0.750068
+	...
+\end{verbatim}
 \end{document}
