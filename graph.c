@@ -65,7 +65,7 @@ void write_graph(graph_t graph, FILE* gout){
                 fprintf(gout, "\t");
                 for (int j=0; j<iter; j++){ //pętla wewnętrzna do przechodzenia po sąsiadach
                         if (graph->weights[i*iter+j] > 0.0){ //jeśli jest połączenie
-                                fprintf(gout, "%d :%lf ", j, graph->weights[i*iter+j]);
+                                fprintf(gout, "  %d :%lf", j, graph->weights[i*iter+j]);
                         }
                 }
                 fprintf(gout, "\n");
