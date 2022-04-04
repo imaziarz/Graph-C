@@ -61,10 +61,15 @@ void write_graph(graph_t graph, FILE* gout){
         int iter = graph->row*graph->col; //zmienna do iterowania równa liczbie wszystkich węzłów
         fprintf(gout, "%d %d\n", graph->row, graph->col);
 
+	int flaga = 0;
         for (int i=0; i<iter; i++){ //pętla zewnętrzna do przechodzenia po węzłach
-                fprintf(gout, "\t");
+                flaga = 0;
                 for (int j=0; j<iter; j++){ //pętla wewnętrzna do przechodzenia po sąsiadach
                         if (graph->weights[i*iter+j] > 0.0){ //jeśli jest połączenie
+				if (flaga == 0){
+					 fprintf(gout, "\t");
+					flaga = 1;
+				}
                                 fprintf(gout, "  %d :%lf", j, graph->weights[i*iter+j]);
                         }
                 }
