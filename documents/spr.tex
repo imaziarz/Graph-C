@@ -205,7 +205,7 @@ Plik \texttt{blednygraf.txt} zawiera:
         2 :7.0  4 :2.0
 \end{verbatim}
 Powyższy plik jest opisem poniższego grafu:
-\begin{figure}[-h!]
+\begin{figure}
 \centering
   \begin{tikzpicture}[node distance = 2cm, auto]
   \node [circle, draw, text centered] (zero) {\large \textbf{0}};
@@ -254,4 +254,25 @@ sugerował, że przyjmowany graf powinien być skierowany. Program \texttt{graph
 	0 :0.896183 5 :0.449257 8 :0.750068
 	...
 \end{verbatim}
+
+Inną problematyczną kwestią była próba dostosowania funkcji \texttt{read\_graph} w ten sposób, aby funkcja interpretowała dane poprawnie pomimo niepełnej zgodności z wymogami formatu pliku. Początkowo funkcja read zawierała warunki określające ilość iteracji w linii,
+\begin{verbatim}
+if (n != 1 && m != 1){
+if (i==0 || i==iter-1 || i==m-1 || i==iter-m) //warunek na 2 sąsiadów
+        k = 2;
+else if ((i%m == 0 || i%m == m-1 || (i>0 && i<m) || (i>iter-m && i<iter))) 
+    //warunek na 3 sąsiadów
+    k = 3;
+else //w innym przypadku będzie 4 sąsiadów
+    k = 4;
+		}
+
+if (n==1 || m==1){
+	if (i==0 || i==iter-1)
+    k = 1;
+	else
+		k = 2;
+		}
+		\end{verbatim}
+		jednak kod nie mógł zostać użyty ze względu na to, że graf spójny niekoniecznie musi być połączony ze wszystkimi swoimi sąsiadami. Z tego powodu w funkcji wczytującej należało zaimplementować pętle nieskończone (ponieważ nie jest wiadomo ile iteracji w linii należy wykonać; wyjście z pętli następuje dopiero po wykryciu znaku nowej linii), co zwiększyło ryzyko pojawienia się błędów przy zapisywaniu grafu do struktury. Gdyby była znana liczba iteracji, użytkownik nie musiałby przestrzegać wymogów odpowiedniej ilości spacji między konkretnymi parametrami w pliku.
 \end{document}
