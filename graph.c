@@ -187,19 +187,19 @@ int bfs(graph_t graph)
 	int k = 0;
 	row [k] = 0;
 	for (i = 0; i < (col * rows); i++)
-		flag[i] = 0;
-	for (i = 0; i < n; i++){
-		flag[row[k]]=1;
+		flag[i] = 0;			//istawiamy flagi na zero
+	for (i = 0; i < n; i++){		//przechodzimy po wszystkich wierzchołkach z kolejki
+		flag[row[k]]=1;			//odznaczamy obecny wierzchołek jako odwiedzony
 		for (j = 0; j < (col * rows); j++)
-			if (graph->weights[row[k] * col * rows + j] != 0 && flag[j] == 0)
+			if (graph->weights[row[k] * col * rows + j] != 0 && flag[j] == 0)	//szukamy krawędzi
 			{
-				n+=1;
-				row = realloc(row, n * sizeof(int));
-				row[n-1] = j;
+				n+=1;		//zwiększamy liczbę wierzchołków w kolecje
+				row = realloc(row, n * sizeof(int));	//zwiększamy pamięć na kolejkę
+				row[n-1] = j;	//dodajemy do kolejki wierzchołek, do którego prowadzi krawędź
 			}
-		k++;
+		k++;	//idziemy do kolejnego numera w kolejce
 	}
-	for (i=0; i < (col * rows); i++){
+	for (i=0; i < (col * rows); i++){	//sprawdzamy odwiedzenie wszystkich wierzchołków
 		if (flag[i] == 0)
 			return 1;
 	}
@@ -222,29 +222,29 @@ void find_path(graph_t graph, int k, int l, FILE *out)
 		printf("Numer węzła końcowego musi być większy lub równy 0. Ustawiam wartość 0.\n");
 		l = 0;
 	} else if (l >= (graph->col * graph->row)) {
-		printf("Numer węzła początkowego znajduje się za przedziałem grafu. Ustawiam wartość %d.\n", (graph->col * graph->row - 1));
+		printf("Numer węzła końcowego znajduje się za przedziałem grafu. Ustawiam wartość %d.\n", (graph->col * graph->row - 1));
 		l = graph->col * graph->row - 1;
 	}
-	double length[graph->col * graph->row];
-	int last[graph->col * graph->row];
+	double length[graph->col * graph->row];		//przszła tabela kosztów dojścia
+	int last[graph->col * graph->row];		//przyszła tabela poprzedników
 	dijkstra(graph, k, last, length);
-	int *path;
-	double *weight;
+	int *path;		//tabela do zapisania odwrotnej odtworzonej ścieżki
+	double *weight;		//tabela do zapisania wag między krawędziami w ścieżce
 	weight = malloc(1 * sizeof(double));
 	fprintf(out, "Najkrótsza ścieżka: \n");
 	int i = l;
 	int n = 1;
 	path = malloc(1 * sizeof(int));
-	path[0] = l;
-	while (last[i] != -1) {
+	path[0] = l;	//pierwsza pozycja - ostatni węzeł
+	while (last[i] != -1) {		//powtarzamy aż dojdziemy do węzła początkowego, dla którego poprzednikiem jest -1
 		n++;
 		path = realloc(path, n * sizeof(int));
-		path[n - 1] = last[i];
+		path[n - 1] = last[i];	//zapisujemy do ścieżki poprzednik
 		weight = realloc(weight, (n-1) * sizeof(double));
-		weight[n - 2] = graph->weights[i * graph->col * graph->row + last[i]];
+		weight[n - 2] = graph->weights[i * graph->col * graph->row + last[i]]; //zapisujemy odpowiednią wagę
 		i = last[i];
 	}
-	for (int j = n - 1; j > 0; j--) {
+	for (int j = n - 1; j > 0; j--) { //wypisujemy ścieżkę (zapisywaliśmy odwrotnie, więc wypisujemy też odwrotnie, aby stało się normalnie)
 		fprintf(out, "%d -%f- ", path[j], weight[j-1]);
 	}
 	fprintf(out, "%d\n", path[0]);
