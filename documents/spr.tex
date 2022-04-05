@@ -147,7 +147,7 @@ Schemat poprawnego formatu danych:
 
 Pierwszą linijkę zajmują dwie liczby: liczba wierszy i liczba kolumn, oddzielone od siebie minimum jedną spacją.
 
-Zaczynając od drugiej linijki, podawane są krawędzie i ich wagi. Numer wierzchołka, od którego zaczyna się krawędź jest równy (numerowi linijki - 2), np. w 2. W tej linijce, tuż po rozmiarach grafu, będą opisane krawędzie prowadzące do wierzchołka 0. Pierwsze dane o krawędzi muszą być podane, odstąpiwszy od początku linijki minimum jedną tabulację lub spację. Między numerem drugiego wierzchołka, złączonego krawędzią, a jej wagą musi być napisany chociażby jeden znak niepusty, np (:). Separatorem dziesiętnym wagi musi być kropka(.). Między dwoma krawędziami muszą być dwie lub więcej spacji. Tuż po ostatniej krawędzi, odnoszącej się do danego wierzchołka, przechodzimy na nową linijkę.
+Zaczynając od drugiej linijki, podawane są krawędzie i ich wagi. Numer wierzchołka, od którego zaczyna się krawędź jest równy (numerowi linijki - 2), np. w 2 linijce, tuż po rozmiarach grafu, będą opisane krawędzie prowadzące do wierzchołka 0. Pierwsze dane o krawędzi muszą być podane, odstąpiwszy od początku linijki minimum jedną tabulację lub spację. Między numerem drugiego wierzchołka, złączonego krawędzią, a jej wagą musi być napisany chociażby jeden znak niepusty, np (:). Separatorem dziesiętnym wagi musi być kropka(.). Między dwoma krawędziami muszą być dwie lub więcej spacji. Tuż po ostatniej krawędzi, odnoszącej się do danego wierzchołka, przechodzimy na nową linijkę.
 
 Nie ma potrzeby podawać wagi dwa razy symetrycznie, np. od 0 do 1 i od 1 do 0 – program duplikuje jedną z podanych wag przy wczytaniu.
 
@@ -166,7 +166,7 @@ Postać symboliczna:
 
 2\texttt{\verbvisiblespace}2\textbackslash n
 
-\textbackslash t2\texttt{\verbvisiblespace}:2.76543\texttt{\verbvisiblespace}\texttt{\verbvisiblespace}1\texttt{\verbvisiblespace}:4.56134\n
+\textbackslash t2\texttt{\verbvisiblespace}:2.76543\texttt{\verbvisiblespace}\texttt{\verbvisiblespace}1\texttt{\verbvisiblespace}:4.56134\textbackslash n
 
 \textbackslash n
 
@@ -180,6 +180,7 @@ W pliku Makefile znajdują się wywołania testów programów pod nazwami „tes
 \begin{itemize}
     \item help
     ./graph -h
+    
     Test służy do sprawdzania działania pliku przy podaniu nieopisanych opcji. Program wyświetla komunikat i instrukcję użycia.
 \begin{verbatim}
 ./graph: invalid option -- 'h'
