@@ -168,5 +168,6 @@ int main(int argc, char **argv)
 		generate_graph(graph, n, m, x, y, s);
 		write_graph(graph, gout);
 	}
+	free(graph);
 	return 0;
 }
