@@ -203,6 +203,7 @@ int bfs(graph_t graph)
 		if (flag[i] == 0)
 			return 1;
 	}
+	free(row);
 	return 0;
 }
 void find_path(graph_t graph, int k, int l, FILE *out)
@@ -249,5 +250,7 @@ void find_path(graph_t graph, int k, int l, FILE *out)
 	}
 	fprintf(out, "%d\n", path[0]);
 	fprintf(out, "Długość ścieżki równa %f\n", length[l]);
+	free(path);
+	free(weight);
 
 }
